@@ -1,6 +1,8 @@
 # inimigo.gd
 extends CharacterBody2D
 
+signal morreu
+
 @export var velocidade = 150
 var jogador = null
 

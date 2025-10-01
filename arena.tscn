@@ -11,7 +11,7 @@ inimigo_cena = ExtResource("2_h0wof")
 [node name="Jogador" parent="." instance=ExtResource("2_27ga2")]
 position = Vector2(354, 274)
 
-[node name="SpawnTimer" type="Timer" parent="."]
-wait_time = 2.0
+[node name="StartTimer" type="Timer" parent="."]
+one_shot = true
 
-[connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]
+[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]

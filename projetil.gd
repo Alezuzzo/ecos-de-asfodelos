@@ -16,6 +16,7 @@ func _process(delta):
 func _on_body_entered(body):
 	# Se o projétil atingir um inimigo
 	if body.is_in_group("inimigos"):
+		body.emit_signal("morreu")
 		body.queue_free() # Destrói o inimigo
 		queue_free() # Destrói o projétil
 
