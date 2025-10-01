@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://blycigrp2wfwp"]
+
+[ext_resource type="Script" uid="uid://oa4xcehjt8eu" path="res://projetil.gd" id="1_4dvx7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xvcbn"]
+size = Vector2(8, 8)
+
+[node name="Projetil" type="Area2D"]
+script = ExtResource("1_4dvx7")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+color = Color(1, 1, 0.06666667, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_xvcbn")
+
+[node name="TimerVida" type="Timer" parent="."]
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="TimerVida" to="." method="_on_timer_vida_timeout"]
