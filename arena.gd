@@ -12,6 +12,8 @@ var tamanho_tela
 
 func _ready():
 	tamanho_tela = get_viewport_rect().size
+	# Conecta o sinal da tela de melhorias ANTES de qualquer coisa
+	$TelaMelhorias.melhoria_selecionada.connect(_on_melhoria_selecionada)
 	# Espera um pouco antes de começar a primeira onda
 	$StartTimer.start()
 
@@ -57,11 +59,27 @@ func _on_inimigo_morreu():
 	# Se não houver mais inimigos, a onda acabou!
 	if inimigos_vivos <= 0:
 		print("--- ONDA ", onda_atual, " COMPLETA! ---")
-		# PAUSA O JOGO E MOSTRA A TELA DE MELHORIAS (AINDA VAMOS CRIAR)
 		get_tree().paused = true
-		# AQUI VAMOS CHAMAR A TELA DA CARTOMANTE NO PRÓXIMO PASSO
-
+		$TelaMelhorias.show()
 
 # Função chamada pelo timer inicial
 func _on_start_timer_timeout():
+	iniciar_nova_onda()
+	
+# Função que recebe o sinal da TelaMelhorias e aplica o upgrade
+func _on_melhoria_selecionada(tipo_melhoria: String):
+	print("Melhoria selecionada: ", tipo_melhoria)
+	var jogador = $Jogador
+	
+	match tipo_melhoria:
+		"velocidade_tiro":
+			# Diminui o tempo de espera, então atira mais rápido
+			jogador.cadencia_tiro = max(0.1, jogador.cadencia_tiro * 0.85)
+		"velocidade_movimento":
+			jogador.velocidade *= 1.15
+		"dano_projetil":
+			# Esta melhoria ainda é conceitual, vamos preparar para o futuro
+			jogador.dano_projetil += 1
+
+	# Começa a próxima onda!
 	iniciar_nova_onda()

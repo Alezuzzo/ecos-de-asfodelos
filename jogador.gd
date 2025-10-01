@@ -4,6 +4,7 @@ extends CharacterBody2D
 # Atributos do jogador
 @export var velocidade = 300
 @export var cadencia_tiro = 0.25 # Tiros por segundo
+@export var dano_projetil = 1
 var pode_atirar = true
 
 # Pre-carrega a cena do projétil que vamos criar no próximo passo
@@ -25,15 +26,17 @@ func _physics_process(delta):
 func atirar():
 	pode_atirar = false
 	
-	# Cria uma instância do projétil
 	var projetil = projetil_cena.instantiate()
 	projetil.position = position
 	projetil.rotation = rotation
 	
-	# Adiciona o projétil à cena principal (fora do jogador)
+	# --- ADIÇÃO AQUI ---
+	# Informa ao projétil qual é o dano atual do jogador
+	projetil.dano = dano_projetil 
+	# --- FIM DA ADIÇÃO ---
+	
 	get_parent().add_child(projetil)
 	
-	# Inicia o timer para a cadência de tiro
 	$TimerCadencia.start(cadencia_tiro)
 
 
