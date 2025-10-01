@@ -6,6 +6,8 @@ extends CharacterBody2D
 @export var cadencia_tiro = 0.25 # Tiros por segundo
 @export var dano_projetil = 1
 var pode_atirar = true
+@export var vida_maxima = 3
+var vida_atual
 
 # Pre-carrega a cena do projétil que vamos criar no próximo passo
 var projetil_cena = preload("res://projetil.tscn")
@@ -39,6 +41,12 @@ func atirar():
 	
 	$TimerCadencia.start(cadencia_tiro)
 
+func _ready():
+	vida_atual = vida_maxima
+
+func curar(quantidade):
+	vida_atual = min(vida_atual + quantidade, vida_maxima)
+	print("Vida atual: ", vida_atual, "/", vida_maxima)
 
 func _on_timer_cadencia_timeout():
 	pode_atirar = true

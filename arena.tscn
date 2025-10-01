@@ -1,13 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://swhhkx7vnfua"]
+[gd_scene load_steps=7 format=3 uid="uid://swhhkx7vnfua"]
 
 [ext_resource type="Script" uid="uid://2sj4gixj5wx5" path="res://arena.gd" id="1_444vf"]
 [ext_resource type="PackedScene" uid="uid://4vicljavkaft" path="res://jogador.tscn" id="2_27ga2"]
 [ext_resource type="PackedScene" uid="uid://oc8bhn4tex14" path="res://inimigo.tscn" id="2_h0wof"]
+[ext_resource type="PackedScene" uid="uid://dksr7db7ap4lc" path="res://atirador.tscn" id="3_sbb53"]
 [ext_resource type="PackedScene" uid="uid://ba04jghaloury" path="res://tela_melhorias.tscn" id="4_h0wof"]
+[ext_resource type="PackedScene" uid="uid://e7yr50mqdyod" path="res://fonte_de_vida.tscn" id="4_pbtuc"]
 
 [node name="Arena" type="Node2D"]
 script = ExtResource("1_444vf")
-inimigo_cena = ExtResource("2_h0wof")
+cenas_inimigos = Array[PackedScene]([ExtResource("2_h0wof"), ExtResource("3_sbb53")])
+cena_fonte_vida = ExtResource("4_pbtuc")
 
 [node name="Jogador" parent="." instance=ExtResource("2_27ga2")]
 position = Vector2(354, 274)
@@ -18,4 +21,8 @@ one_shot = true
 [node name="TelaMelhorias" parent="." instance=ExtResource("4_h0wof")]
 visible = false
 
+[node name="EventoTimer" type="Timer" parent="."]
+wait_time = 10.0
+
 [connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="timeout" from="EventoTimer" to="." method="_on_evento_timer_timeout"]

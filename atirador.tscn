@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://dksr7db7ap4lc"]
+
+[ext_resource type="Script" uid="uid://bid56nuq6acv8" path="res://atirador.gd" id="1_5chg7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1su0k"]
+size = Vector2(32, 32)
+
+[node name="Atirador" type="CharacterBody2D" groups=["inimigos"]]
+script = ExtResource("1_5chg7")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+color = Color(0.6725799, 0.21418548, 0.5298012, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_1su0k")
+
+[node name="TiroTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="TiroTimer" to="." method="_on_tiro_timer_timeout"]

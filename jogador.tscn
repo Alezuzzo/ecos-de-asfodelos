@@ -5,7 +5,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_c2wt1"]
 size = Vector2(31, 30)
 
-[node name="jogador" type="CharacterBody2D"]
+[node name="jogador" type="CharacterBody2D" groups=["jogador"]]
 script = ExtResource("1_yuxfx")
 
 [node name="ColorRect" type="ColorRect" parent="."]

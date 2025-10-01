@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://e7yr50mqdyod"]
+
+[ext_resource type="Script" uid="uid://cig2a5ig2n6y" path="res://fonte_de_vida.gd" id="1_7s0o7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5uwys"]
+size = Vector2(40, 40)
+
+[node name="FonteDeVida" type="Area2D"]
+script = ExtResource("1_7s0o7")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+color = Color(0.4834036, 1, 1, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_5uwys")
+
+[node name="VidaTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="VidaTimer" to="." method="_on_vida_timer_timeout"]
