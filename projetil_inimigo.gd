@@ -12,12 +12,10 @@ func _process(delta):
 
 # Esta é a parte importante: a colisão com o jogador
 func _on_body_entered(body):
-	# Se atingir um corpo que está no grupo "jogador"
 	if body.is_in_group("jogador"):
-		# No futuro, aqui você diminuiria a vida do jogador.
-		# Por enquanto, vamos apenas destruir o jogador para testar.
-		print("JOGADOR ATINGIDO!")
-		body.queue_free() # Destrói o jogador
+		# ANTES: body.queue_free()
+		# AGORA:
+		body.sofrer_dano(1) # Causa 1 de dano (meio coração)
 		queue_free() # Destrói o projétil
 
 func _on_timer_vida_timeout():
