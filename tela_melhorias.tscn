@@ -2,9 +2,10 @@
 
 [ext_resource type="Script" uid="uid://duejlkprctbbq" path="res://tela_melhorias.gd" id="1_e45e6"]
 
-[node name="TelaMelhorias" type="CanvasLayer"]
+[node name="TelaMelhorias" type="CanvasLayer" node_paths=PackedStringArray("botoes")]
 process_mode = 3
 script = ExtResource("1_e45e6")
+botoes = [NodePath("ColorRect/VBoxContainer/button"), NodePath("ColorRect/VBoxContainer/button2"), NodePath("ColorRect/VBoxContainer/button3")]
 
 [node name="ColorRect" type="ColorRect" parent="."]
 anchors_preset = 15
@@ -21,21 +22,18 @@ offset_top = 226.0
 offset_right = 633.0
 offset_bottom = 327.0
 
-[node name="botao velocidade tiro" type="Button" parent="ColorRect/VBoxContainer"]
+[node name="button" type="Button" parent="ColorRect/VBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-text = "+ Velocidade de Tiro"
 
-[node name="botao velocidade movimento" type="Button" parent="ColorRect/VBoxContainer"]
+[node name="button2" type="Button" parent="ColorRect/VBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-text = "+ Velocidade de Movimento"
 
-[node name="botao dano projetil" type="Button" parent="ColorRect/VBoxContainer"]
+[node name="button3" type="Button" parent="ColorRect/VBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-text = "+ Dano do Projétil"
 
-[connection signal="pressed" from="ColorRect/VBoxContainer/botao velocidade tiro" to="." method="_on_botao_velocidade_tiro_pressed"]
-[connection signal="pressed" from="ColorRect/VBoxContainer/botao velocidade movimento" to="." method="_on_botao_velocidade_movimento_pressed"]
-[connection signal="pressed" from="ColorRect/VBoxContainer/botao dano projetil" to="." method="_on_botao_dano_projetil_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/button" to="." method="_on_botao_velocidade_tiro_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/button2" to="." method="_on_botao_velocidade_movimento_pressed"]
+[connection signal="pressed" from="ColorRect/VBoxContainer/button3" to="." method="_on_botao_dano_projetil_pressed"]

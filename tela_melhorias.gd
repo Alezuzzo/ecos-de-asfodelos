@@ -1,26 +1,47 @@
 # tela_melhorias.gd
 extends CanvasLayer
 
-# Sinal para avisar a Arena qual melhoria foi escolhida
-signal melhoria_selecionada(tipo_melhoria: String)
+signal melhoria_selecionada(id_carta: String)
 
-func _on_botao_velocidade_tiro_pressed():
-	emit_signal("melhoria_selecionada", "velocidade_tiro")
-	finalizar_escolha()
+# Esta variável PRECISA ser preenchida no Inspetor do Godot.
+@export var botoes: Array[Button]
 
-func _on_botao_velocidade_movimento_pressed():
-	emit_signal("melhoria_selecionada", "velocidade_movimento")
-	finalizar_escolha()
+var cartas_atuais = []
 
-func _on_botao_dano_projetil_pressed():
-	emit_signal("melhoria_selecionada", "dano_projetil")
-	finalizar_escolha()
+func _ready():
+	# Garante que temos 3 botões ligados antes de conectar os sinais
+	if botoes.size() == 3:
+		botoes[0].pressed.connect(_on_botao_pressionado.bind(0))
+		botoes[1].pressed.connect(_on_botao_pressionado.bind(1))
+		botoes[2].pressed.connect(_on_botao_pressionado.bind(2))
+	else:
+		print("ERRO CRÍTICO: Arraste os 3 nós de botão para a variável 'Botoes' no Inspetor do nó TelaMelhorias!")
 
-# Função para esconder a tela, despausar o jogo e avisar a Arena
-func finalizar_escolha():
+func preparar_e_mostrar():
+	# Verificação de segurança para garantir que os botões foram ligados no editor
+	if botoes.size() < 3:
+		print("ERRO: A tela de melhorias não pode ser mostrada porque os botões não foram ligados no Inspetor.")
+		return
+
+	cartas_atuais = CardDB.sortear_cartas(3)
+	if cartas_atuais.size() < 3: return
+	
+	for i in range(3):
+		var id_carta = cartas_atuais[i]
+		var info_carta = CardDB.get_card_info(id_carta)
+		var botao = botoes[i]
+		
+		if info_carta:
+			botao.text = info_carta["nome"]
+			
+			if info_carta.has("tipo") and info_carta["tipo"] == "corrompida":
+				botao.add_theme_color_override("font_color", Color.CRIMSON)
+			else:
+				botao.remove_theme_color_override("font_color")
+	
+	show()
+
+func _on_botao_pressionado(indice_botao):
+	emit_signal("melhoria_selecionada", cartas_atuais[indice_botao])
 	hide()
 	get_tree().paused = false
-
-
-func _on_button_pressed() -> void:
-	pass # Replace with function body.

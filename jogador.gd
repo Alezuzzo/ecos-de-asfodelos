@@ -70,3 +70,9 @@ func sofrer_dano(quantidade):
 func curar(quantidade):
 	saude_atual = min(saude_atual + quantidade, saude_maxima)
 	emit_signal("saude_alterada", saude_atual, saude_maxima)
+
+# Nova função para a carta Vontade de Ferro
+func aumentar_vida_maxima(quantidade):
+	saude_maxima += quantidade
+	# Cura o jogador pela mesma quantidade para encher o novo coração
+	curar(quantidade) 

@@ -112,20 +112,32 @@ func _on_inimigo_morreu():
 	if inimigos_vivos <= 0:
 		if onda_atual + 1 == onda_do_chefe:
 			print("--- ONDA ", onda_atual, " COMPLETA! O CHEFE SE APROXIMA... ---")
-			iniciar_nova_onda()
+			call_deferred("iniciar_nova_onda")
 		else:
 			print("--- ONDA ", onda_atual, " COMPLETA! ---")
 			get_tree().paused = true
-			$TelaMelhorias.show()
+			$TelaMelhorias.preparar_e_mostrar() 
 
 func _on_chefe_morreu():
 	print("VITÓRIA! O Guardião foi libertado.")
 	get_tree().paused = true
 
-func _on_melhoria_selecionada(tipo_melhoria: String):
+func _on_melhoria_selecionada(id_carta: String):
+	print("Melhoria selecionada: ", id_carta)
 	if not jogador_node: return
 
-	match tipo_melhoria:
+	# O novo match statement usa os IDs do nosso CardDB
+	match id_carta:
+		"vontade_de_ferro":
+			jogador_node.aumentar_vida_maxima(2) # 2 pontos = 1 coração inteiro
+		
+		# Provisório para as outras cartas que ainda não implementamos
+		"guardiao_caido":
+			print("Implementar Guardião Caído")
+		"foco_do_penitente":
+			print("Implementar Foco do Penitente")
+			
+		# Melhorias antigas que podemos remover ou adaptar depois
 		"velocidade_tiro":
 			jogador_node.cadencia_tiro = max(0.1, jogador_node.cadencia_tiro * 0.85)
 		"velocidade_movimento":
