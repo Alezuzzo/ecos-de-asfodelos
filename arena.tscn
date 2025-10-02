@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://swhhkx7vnfua"]
+[gd_scene load_steps=9 format=3 uid="uid://swhhkx7vnfua"]
 
 [ext_resource type="Script" uid="uid://2sj4gixj5wx5" path="res://arena.gd" id="1_444vf"]
 [ext_resource type="PackedScene" uid="uid://4vicljavkaft" path="res://jogador.tscn" id="2_27ga2"]
@@ -6,12 +6,14 @@
 [ext_resource type="PackedScene" uid="uid://dksr7db7ap4lc" path="res://atirador.tscn" id="3_sbb53"]
 [ext_resource type="PackedScene" uid="uid://ba04jghaloury" path="res://tela_melhorias.tscn" id="4_h0wof"]
 [ext_resource type="PackedScene" uid="uid://e7yr50mqdyod" path="res://fonte_de_vida.tscn" id="4_pbtuc"]
+[ext_resource type="PackedScene" uid="uid://bvxbwfcpx1d1u" path="res://guardiao.tscn" id="5_yokb4"]
 [ext_resource type="PackedScene" uid="uid://y3f0yvohs0o5" path="res://hud.tscn" id="7_pbtuc"]
 
 [node name="Arena" type="Node2D"]
 script = ExtResource("1_444vf")
 cenas_inimigos = Array[PackedScene]([ExtResource("2_h0wof"), ExtResource("3_sbb53")])
 cena_fonte_vida = ExtResource("4_pbtuc")
+cena_chefe = ExtResource("5_yokb4")
 
 [node name="Jogador" parent="." instance=ExtResource("2_27ga2")]
 position = Vector2(354, 274)

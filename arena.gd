@@ -1,39 +1,56 @@
+# arena.gd
 extends Node2D
 
 @export var cenas_inimigos: Array[PackedScene]
 @export var cena_fonte_vida: PackedScene
+@export var cena_chefe: PackedScene
 
-# Vamos guardar a referência do nó do jogador nesta variável
+# --- Variáveis de Estado ---
 var jogador_node = null
+var luta_contra_chefe_ativa = false
 
-# Variáveis para controlar as ondas
+# --- Variáveis das Ondas ---
 var onda_atual = 0
 var inimigos_vivos = 0
 var base_inimigos_por_onda = 3
+var onda_do_chefe = 5
 
-var tamanho_tela
+# --- NOME DA VARIÁVEL CORRIGIDO AQUI ---
+var tamanho_da_tela: Vector2
+
+#-----------------------------------------------------------------------------
+# FUNÇÕES PRINCIPAIS DO GODOT
+#-----------------------------------------------------------------------------
 
 func _ready():
-	# Primeiro, pegamos a referência do jogador.
+	# Pega referências importantes no início
 	jogador_node = $Jogador
 	
-	# Depois, conectamos o sinal do jogador ao HUD.
+	# --- NOME DA VARIÁVEL CORRIGIDO AQUI ---
+	tamanho_da_tela = get_viewport_rect().size
+	
+	# Conecta os sinais
 	jogador_node.saude_alterada.connect($HUD.atualizar_coracoes)
-	
-	# --- A SOLUÇÃO ESTÁ AQUI ---
-	# Agora que sabemos que a conexão está feita, nós manualmente
-	# mandamos o HUD se atualizar com a vida inicial do jogador.
-	$HUD.atualizar_coracoes(jogador_node.saude_atual, jogador_node.saude_maxima)
-	# --- FIM DA SOLUÇÃO ---
-	
-	# O resto da função continua normalmente.
-	tamanho_tela = get_viewport_rect().size
 	$TelaMelhorias.melhoria_selecionada.connect(_on_melhoria_selecionada)
+	
+	# Manda o HUD se desenhar pela primeira vez
+	$HUD.atualizar_coracoes(jogador_node.saude_atual, jogador_node.saude_maxima)
+	
+	# Inicia os timers do jogo
 	$StartTimer.start()
 	$EventoTimer.start()
 
+#-----------------------------------------------------------------------------
+# LÓGICA DAS ONDAS E INIMIGOS
+#-----------------------------------------------------------------------------
+
 func iniciar_nova_onda():
 	onda_atual += 1
+	
+	if onda_atual == onda_do_chefe:
+		iniciar_luta_chefe()
+		return
+		
 	print("--- INICIANDO ONDA ", onda_atual, " ---")
 	var quantidade_a_spawnar = base_inimigos_por_onda + (onda_atual * 2)
 	inimigos_vivos = quantidade_a_spawnar
@@ -52,42 +69,61 @@ func spawnar_inimigo():
 	var spawn_pos = Vector2()
 	var borda = randi() % 4
 	match borda:
-		0: spawn_pos = Vector2(randf_range(0, tamanho_tela.x), -50)
-		1: spawn_pos = Vector2(randf_range(0, tamanho_tela.x), tamanho_tela.y + 50)
-		2: spawn_pos = Vector2(-50, randf_range(0, tamanho_tela.y))
-		3: spawn_pos = Vector2(tamanho_tela.x + 50, randf_range(0, tamanho_tela.y))
+		# --- NOME DA VARIÁVEL CORRIGIDO AQUI ---
+		0: spawn_pos = Vector2(randf_range(0, tamanho_da_tela.x), -50)
+		1: spawn_pos = Vector2(randf_range(0, tamanho_da_tela.x), tamanho_da_tela.y + 50)
+		2: spawn_pos = Vector2(-50, randf_range(0, tamanho_da_tela.y))
+		3: spawn_pos = Vector2(tamanho_da_tela.x + 50, randf_range(0, tamanho_da_tela.y))
 			
 	inimigo.global_position = spawn_pos
-	
-	# Usamos a nossa variável em vez de procurar o nó de novo
 	inimigo.jogador = jogador_node
-	
 	add_child(inimigo)
 
-func _on_evento_timer_timeout():
-	if randf() < 0.3:
-		var fonte = cena_fonte_vida.instantiate()
-		fonte.global_position = Vector2(
-			randf_range(50, tamanho_tela.x - 50),
-			randf_range(50, tamanho_tela.y - 50)
-		)
-		add_child(fonte)
-		print("FONTE DE VIDA APARECEU!")
+#-----------------------------------------------------------------------------
+# LÓGICA DO CHEFE
+#-----------------------------------------------------------------------------
+
+func iniciar_luta_chefe():
+	print("--- O GUARDIÃO APARECEU! ---")
+	luta_contra_chefe_ativa = true
+	$EventoTimer.stop()
+	
+	for inimigo in get_tree().get_nodes_in_group("inimigos"):
+		inimigo.queue_free()
+		
+	var chefe = cena_chefe.instantiate()
+	# --- NOME DA VARIÁVEL CORRIGIDO AQUI ---
+	chefe.position = tamanho_da_tela / 2
+	chefe.jogador = jogador_node
+	add_child(chefe)
+	
+	chefe.connect("morreu", _on_chefe_morreu)
+
+#-----------------------------------------------------------------------------
+# FUNÇÕES CONECTADAS A SINAIS (Callbacks)
+#-----------------------------------------------------------------------------
 
 func _on_inimigo_morreu():
+	if luta_contra_chefe_ativa: return
+	
 	inimigos_vivos -= 1
+	print("Inimigo derrotado! Restam: ", inimigos_vivos)
+	
 	if inimigos_vivos <= 0:
-		get_tree().paused = true
-		$TelaMelhorias.show()
+		if onda_atual + 1 == onda_do_chefe:
+			print("--- ONDA ", onda_atual, " COMPLETA! O CHEFE SE APROXIMA... ---")
+			iniciar_nova_onda()
+		else:
+			print("--- ONDA ", onda_atual, " COMPLETA! ---")
+			get_tree().paused = true
+			$TelaMelhorias.show()
 
-func _on_start_timer_timeout():
-	iniciar_nova_onda()
-	
+func _on_chefe_morreu():
+	print("VITÓRIA! O Guardião foi libertado.")
+	get_tree().paused = true
+
 func _on_melhoria_selecionada(tipo_melhoria: String):
-	print("Melhoria selecionada: ", tipo_melhoria)
-	
-	# Usamos a nossa variável em vez de procurar o nó de novo
-	if not jogador_node: return # Segurança extra
+	if not jogador_node: return
 
 	match tipo_melhoria:
 		"velocidade_tiro":
@@ -98,3 +134,17 @@ func _on_melhoria_selecionada(tipo_melhoria: String):
 			jogador_node.dano_projetil += 1
 			
 	iniciar_nova_onda()
+
+func _on_start_timer_timeout():
+	iniciar_nova_onda()
+	
+func _on_evento_timer_timeout():
+	if randf() < 0.3:
+		var fonte = cena_fonte_vida.instantiate()
+		# --- NOME DA VARIÁVEL CORRIGIDO AQUI ---
+		fonte.global_position = Vector2(
+			randf_range(50, tamanho_da_tela.x - 50),
+			randf_range(50, tamanho_da_tela.y - 50)
+		)
+		add_child(fonte)
+		print("FONTE DE VIDA APARECEU!")

@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://bvxbwfcpx1d1u"]
+
+[ext_resource type="Script" uid="uid://bop1lqtfnbkmh" path="res://guardiao.gd" id="1_jchh4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jchh4"]
+size = Vector2(64, 64)
+
+[node name="Guardiao" type="CharacterBody2D" groups=["inimigos"]]
+script = ExtResource("1_jchh4")
+vida_maxima = 150
+velocidade = 200.0
+cooldown_ataque_f1 = 2.0
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_jchh4")
+
+[node name="DanoCooldown" type="Timer" parent="."]
+one_shot = true
+
+[node name="AtaqueCooldown" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
+[connection signal="timeout" from="DanoCooldown" to="." method="_on_dano_cooldown_timeout"]
+[connection signal="timeout" from="AtaqueCooldown" to="." method="_on_ataque_cooldown_timeout"]
