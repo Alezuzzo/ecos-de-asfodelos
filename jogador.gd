@@ -15,8 +15,6 @@ var saude_atual
 
 # Cenas
 var projetil_cena = preload("res://projetil.tscn")
-
-# --- NOVAS VARIÁVEIS AQUI ---
 var tamanho_da_tela: Vector2
 var metade_do_tamanho_sprite = Vector2(16, 16) # Metade do tamanho do nosso sprite (32x32)
 
@@ -24,7 +22,6 @@ func _ready():
 	saude_atual = saude_maxima
 	emit_signal("saude_alterada", saude_atual, saude_maxima)
 	
-	# --- ADIÇÃO AQUI ---
 	# Pega o tamanho da tela uma vez no início e o guarda na variável.
 	tamanho_da_tela = get_viewport_rect().size
 
@@ -42,13 +39,10 @@ func _physics_process(delta):
 	# Usamos a posição global para garantir precisão.
 	global_position.x = clamp(global_position.x, metade_do_tamanho_sprite.x, tamanho_da_tela.x - metade_do_tamanho_sprite.x)
 	global_position.y = clamp(global_position.y, metade_do_tamanho_sprite.y, tamanho_da_tela.y - metade_do_tamanho_sprite.y)
-	# --- FIM DA LÓGICA DE LIMITAÇÃO ---
 
 	# Tiro
 	if Input.is_action_pressed("atirar") and pode_atirar:
 		atirar()
-
-# ... (O resto do seu script continua aqui, sem nenhuma outra alteração) ...
 
 func atirar():
 	pode_atirar = false

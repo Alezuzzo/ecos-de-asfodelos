@@ -17,3 +17,8 @@ color = Color(0.7911234, 0.07230427, 1.732707e-06, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_1su0k")
+
+[node name="DanoCooldown" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="DanoCooldown" to="." method="_on_dano_cooldown_timeout"]
