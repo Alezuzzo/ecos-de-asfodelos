@@ -8,6 +8,16 @@ var tex_coracao_vazio = preload("res://assets/coracao_vida/coracao_vazio.png")
 
 @onready var container_coracoes = $ContainerCoracoes
 @onready var foco_timer_ui = $FocoTimerUI # Pega a referência da nossa ProgressBar
+@onready var notificacao_label = $NotificacaoLabel
+@onready var notificacao_timer = $NotificacaoTimer
+
+func mostrar_notificacao(texto: String):
+	notificacao_label.text = texto
+	notificacao_label.show()
+	notificacao_timer.start()
+
+func _on_notificacao_timer_timeout():
+	notificacao_label.hide()
 
 func mostrar_timer_foco(visivel: bool):
 	foco_timer_ui.visible = visivel
