@@ -7,6 +7,14 @@ var tex_meio_coracao = preload("res://assets/coracao_vida/meio_coracao.png")
 var tex_coracao_vazio = preload("res://assets/coracao_vida/coracao_vazio.png")
 
 @onready var container_coracoes = $ContainerCoracoes
+@onready var foco_timer_ui = $FocoTimerUI # Pega a referência da nossa ProgressBar
+
+func mostrar_timer_foco(visivel: bool):
+	foco_timer_ui.visible = visivel
+
+func atualizar_timer_foco(progresso: float):
+	# O valor da ProgressBar vai de 0 a 100
+	foco_timer_ui.value = progresso * 100.0
 
 # --- ESTA É A FUNÇÃO ATUALIZADA ---
 func atualizar_coracoes(saude_atual, saude_maxima):

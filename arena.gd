@@ -15,7 +15,6 @@ var inimigos_vivos = 0
 var base_inimigos_por_onda = 3
 var onda_do_chefe = 5
 
-# --- NOME DA VARIÁVEL CORRIGIDO AQUI ---
 var tamanho_da_tela: Vector2
 
 #-----------------------------------------------------------------------------
@@ -25,9 +24,11 @@ var tamanho_da_tela: Vector2
 func _ready():
 	# Pega referências importantes no início
 	jogador_node = $Jogador
-	
-	# --- NOME DA VARIÁVEL CORRIGIDO AQUI ---
 	tamanho_da_tela = get_viewport_rect().size
+	
+	# --- ALTERAÇÃO 1: Passa a referência do HUD para o jogador ---
+	# Isso é necessário para que o jogador possa controlar o timer visual.
+	jogador_node.hud = $HUD
 	
 	# Conecta os sinais
 	jogador_node.saude_alterada.connect($HUD.atualizar_coracoes)
@@ -69,7 +70,6 @@ func spawnar_inimigo():
 	var spawn_pos = Vector2()
 	var borda = randi() % 4
 	match borda:
-		# --- NOME DA VARIÁVEL CORRIGIDO AQUI ---
 		0: spawn_pos = Vector2(randf_range(0, tamanho_da_tela.x), -50)
 		1: spawn_pos = Vector2(randf_range(0, tamanho_da_tela.x), tamanho_da_tela.y + 50)
 		2: spawn_pos = Vector2(-50, randf_range(0, tamanho_da_tela.y))
@@ -92,7 +92,6 @@ func iniciar_luta_chefe():
 		inimigo.queue_free()
 		
 	var chefe = cena_chefe.instantiate()
-	# --- NOME DA VARIÁVEL CORRIGIDO AQUI ---
 	chefe.position = tamanho_da_tela / 2
 	chefe.jogador = jogador_node
 	add_child(chefe)
@@ -116,7 +115,7 @@ func _on_inimigo_morreu():
 		else:
 			print("--- ONDA ", onda_atual, " COMPLETA! ---")
 			get_tree().paused = true
-			$TelaMelhorias.preparar_e_mostrar() 
+			$TelaMelhorias.preparar_e_mostrar()
 
 func _on_chefe_morreu():
 	print("VITÓRIA! O Guardião foi libertado.")
@@ -126,16 +125,18 @@ func _on_melhoria_selecionada(id_carta: String):
 	print("Melhoria selecionada: ", id_carta)
 	if not jogador_node: return
 
-	# O novo match statement usa os IDs do nosso CardDB
 	match id_carta:
 		"vontade_de_ferro":
-			jogador_node.aumentar_vida_maxima(2) # 2 pontos = 1 coração inteiro
+			jogador_node.aumentar_vida_maxima(2)
 		
-		# Provisório para as outras cartas que ainda não implementamos
 		"guardiao_caido":
-			print("Implementar Guardião Caído")
+			jogador_node.tem_guardiao_caido = true
+		
+		# --- ALTERAÇÃO 2: Chama a função de ativação no jogador ---
+		# Em vez de mexer nas variáveis do jogador diretamente daqui,
+		# nós chamamos a função que preparamos para isso.
 		"foco_do_penitente":
-			print("Implementar Foco do Penitente")
+			jogador_node.ativar_foco_penitente()
 			
 		# Melhorias antigas que podemos remover ou adaptar depois
 		"velocidade_tiro":
@@ -153,7 +154,6 @@ func _on_start_timer_timeout():
 func _on_evento_timer_timeout():
 	if randf() < 0.3:
 		var fonte = cena_fonte_vida.instantiate()
-		# --- NOME DA VARIÁVEL CORRIGIDO AQUI ---
 		fonte.global_position = Vector2(
 			randf_range(50, tamanho_da_tela.x - 50),
 			randf_range(50, tamanho_da_tela.y - 50)

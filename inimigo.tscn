@@ -21,4 +21,8 @@ shape = SubResource("RectangleShape2D_1su0k")
 [node name="DanoCooldown" type="Timer" parent="."]
 one_shot = true
 
+[node name="StunTimer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="timeout" from="DanoCooldown" to="." method="_on_dano_cooldown_timeout"]
+[connection signal="timeout" from="StunTimer" to="." method="_on_stun_timer_timeout"]

@@ -26,4 +26,3 @@ wait_time = 7.0
 one_shot = true
 
 [connection signal="timeout" from="TimerCadencia" to="." method="_on_timer_cadencia_timeout"]
-[connection signal="timeout" from="FocoTimer" to="." method="_on_foco_timer_timeout"]
