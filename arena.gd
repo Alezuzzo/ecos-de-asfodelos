@@ -46,6 +46,10 @@ func _ready():
 #-----------------------------------------------------------------------------
 
 func iniciar_nova_onda():
+	# Reseta a flag do Baluarte no jogador
+	if is_instance_valid(jogador_node):
+		jogador_node.baluarte_usado_na_onda = false
+	
 	onda_atual += 1
 	
 	if onda_atual == onda_do_chefe:
@@ -97,6 +101,26 @@ func iniciar_luta_chefe():
 	add_child(chefe)
 	
 	chefe.connect("morreu", _on_chefe_morreu)
+	
+func verificar_sinergias(jogador):
+	# Verifica se o jogador já tem a sinergia para não ativar de novo
+	if jogador.tem_baluarte_da_alma:
+		return
+
+	# Define quais cartas são necessárias para a sinergia
+	var cartas_necessarias = ["vontade_de_ferro", "guardiao_caido", "foco_do_penitente"]
+	var tem_todas = true
+	
+	for id_carta in cartas_necessarias:
+		if not id_carta in jogador.cartas_coletadas:
+			tem_todas = false
+			break # Se faltar uma, já para de verificar
+	
+	if tem_todas:
+		print("SINERGIA ATIVADA: Baluarte da Alma!")
+		jogador.tem_baluarte_da_alma = true
+		# Chama a função no HUD para mostrar o aviso
+		$HUD.mostrar_notificacao("Baluarte da Alma Ativado!")
 
 #-----------------------------------------------------------------------------
 # FUNÇÕES CONECTADAS A SINAIS (Callbacks)
@@ -124,6 +148,9 @@ func _on_chefe_morreu():
 func _on_melhoria_selecionada(id_carta: String):
 	print("Melhoria selecionada: ", id_carta)
 	if not jogador_node: return
+	
+	if not id_carta in jogador_node.cartas_coletadas:
+		jogador_node.cartas_coletadas.append(id_carta)
 
 	match id_carta:
 		"vontade_de_ferro":
@@ -146,6 +173,7 @@ func _on_melhoria_selecionada(id_carta: String):
 		"dano_projetil":
 			jogador_node.dano_projetil += 1
 			
+	verificar_sinergias(jogador_node)
 	iniciar_nova_onda()
 
 func _on_start_timer_timeout():

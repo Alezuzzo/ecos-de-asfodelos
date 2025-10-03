@@ -15,6 +15,11 @@ var projetil_cena = preload("res://projetil.tscn")
 var onda_de_choque_cena = preload("res://onda_de_choque.tscn")
 var hud = null # Guardará a referência do HUD
 
+var cartas_coletadas = [] # <-- ADICIONE AQUI: O inventário de cartas
+var tem_baluarte_da_alma = false # <-- ADICIONE AQUI: Flag da sinergia
+var baluarte_usado_na_onda = false # <-- ADICIONE AQUI: Controle de uso por onda
+var invulneravel = false # <-- ADICIONE AQUI: Flag de invulnerabilidade
+
 # Estado das Melhorias
 var pode_atirar = true
 var tem_guardiao_caido = false
@@ -62,7 +67,37 @@ func atirar():
 	get_parent().add_child(projetil)
 	$TimerCadencia.start(cadencia_tiro)
 
+func _on_invulnerabilidade_timer_timeout():
+	invulneravel = false
+
+func piscar():
+	# Cria uma animação que faz o jogador piscar (alterna a visibilidade)
+	var tween = create_tween().set_loops(4) # Pisca 4 vezes em 2 segundos
+	# Fica semitransparente
+	tween.tween_property(self, "modulate:a", 0.3, 0.25)
+	# Volta ao normal
+	tween.tween_property(self, "modulate:a", 1.0, 0.25)
+
 func sofrer_dano(quantidade):
+	# Se estiver invulnerável, não recebe dano
+	if invulneravel:
+		return
+	
+	var saude_projetada = saude_atual - quantidade
+	
+	if tem_baluarte_da_alma and not baluarte_usado_na_onda and saude_projetada <= 0:
+		print("BALUARTE DA ALMA ATIVADO!")
+		baluarte_usado_na_onda = true # Marca como usado nesta onda
+		
+		# Fica invulnerável
+		invulneravel = true
+		$InvulnerabilidadeTimer.start()
+		piscar() # Efeito visual
+		
+		# Recupera um coração
+		curar(2) 
+		return # Para a execução aqui, o dano foi negado
+	
 	saude_atual -= quantidade
 	emit_signal("saude_alterada", saude_atual, saude_maxima)
 	

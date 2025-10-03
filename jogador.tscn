@@ -25,5 +25,10 @@ shape = SubResource("RectangleShape2D_c2wt1")
 wait_time = 7.0
 one_shot = true
 
+[node name="InvulnerabilidadeTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
 [connection signal="timeout" from="TimerCadencia" to="." method="_on_timer_cadencia_timeout"]
 [connection signal="timeout" from="FocoTimer" to="." method="_on_foco_timer_timeout"]
+[connection signal="timeout" from="InvulnerabilidadeTimer" to="." method="_on_invulnerabilidade_timer_timeout"]
