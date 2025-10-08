@@ -1,21 +1,43 @@
-[gd_scene load_steps=3 format=3 uid="uid://oc8bhn4tex14"]
+[gd_scene load_steps=9 format=3 uid="uid://oc8bhn4tex14"]
 
 [ext_resource type="Script" uid="uid://srcefciccjp8" path="res://inimigo.gd" id="1_030df"]
+[ext_resource type="Texture2D" uid="uid://c76ujs62ndkcq" path="res://assets/grabman/grabman1.png" id="2_o83ti"]
+[ext_resource type="Texture2D" uid="uid://bnsas0xutnatc" path="res://assets/grabman/grabman2.png" id="3_5cs1f"]
+[ext_resource type="Texture2D" uid="uid://5rdo7f6wloy3" path="res://assets/grabman/grabman3.png" id="4_ekwcj"]
+[ext_resource type="Texture2D" uid="uid://biujo0xouwqog" path="res://assets/grabman/grabman4.png" id="5_eewpo"]
+[ext_resource type="Texture2D" uid="uid://bs8tb2k8r6nap" path="res://assets/grabman/grabman5.png" id="6_3af6e"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1su0k"]
-size = Vector2(32, 32)
+size = Vector2(60, 78)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_nglqo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_o83ti")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_5cs1f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ekwcj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_eewpo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_3af6e")
+}],
+"loop": true,
+"name": &"default",
+"speed": 6.0
+}]
 
 [node name="Inimigo" type="CharacterBody2D" groups=["inimigos"]]
 script = ExtResource("1_030df")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
-color = Color(0.7911234, 0.07230427, 1.732707e-06, 1)
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-2, -4)
 shape = SubResource("RectangleShape2D_1su0k")
 
 [node name="DanoCooldown" type="Timer" parent="."]
@@ -23,6 +45,12 @@ one_shot = true
 
 [node name="StunTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.3, 0.3)
+sprite_frames = SubResource("SpriteFrames_nglqo")
+autoplay = "default"
+frame_progress = 0.84193325
 
 [connection signal="timeout" from="DanoCooldown" to="." method="_on_dano_cooldown_timeout"]
 [connection signal="timeout" from="StunTimer" to="." method="_on_stun_timer_timeout"]
