@@ -1,24 +1,73 @@
-[gd_scene load_steps=3 format=3 uid="uid://cskdyksyrjlrr"]
+[gd_scene load_steps=14 format=3 uid="uid://cskdyksyrjlrr"]
 
 [ext_resource type="Script" uid="uid://u57fugxsojb3" path="res://projetil_inimigo.gd" id="1_gqbvf"]
+[ext_resource type="Texture2D" uid="uid://d3la12okl5sjs" path="res://assets/projetil/projetil2/projectil2.png" id="2_v8rsf"]
+[ext_resource type="Texture2D" uid="uid://babsreifs5nkc" path="res://assets/projetil/projetil2/projectil3.png" id="3_k0gy1"]
+[ext_resource type="Texture2D" uid="uid://ci33kss7xcx6v" path="res://assets/projetil/projetil2/projectil4.png" id="4_podaa"]
+[ext_resource type="Texture2D" uid="uid://cksu6ubficb3f" path="res://assets/projetil/projetil2/projectil5.png" id="5_lidsu"]
+[ext_resource type="Texture2D" uid="uid://bvi2kym5ejdji" path="res://assets/projetil/projetil2/projectil6.png" id="6_ivif7"]
+[ext_resource type="Texture2D" uid="uid://dvs6nbbh6xgjl" path="res://assets/projetil/projetil2/projectil7.png" id="7_yeur1"]
+[ext_resource type="Texture2D" uid="uid://ivxtatuno74e" path="res://assets/projetil/projetil2/projectil8.png" id="8_ovp2x"]
+[ext_resource type="Texture2D" uid="uid://etrosscbheq5" path="res://assets/projetil/projetil2/projectil9.png" id="9_v510l"]
+[ext_resource type="Texture2D" uid="uid://q7esudck5ayo" path="res://assets/projetil/projetil2/projectil10.png" id="10_urd3m"]
+[ext_resource type="Texture2D" uid="uid://8hoxux04p5qn" path="res://assets/projetil/projetil2/projectil11.png" id="11_ofppt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xvcbn"]
-size = Vector2(8, 8)
+size = Vector2(42, 12)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_k0i8x"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_v8rsf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_k0gy1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_podaa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_lidsu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_ivif7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_yeur1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_ovp2x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_v510l")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_urd3m")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_ofppt")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
 
 [node name="ProjetilInimigo" type="Area2D"]
 script = ExtResource("1_gqbvf")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-offset_left = -4.0
-offset_top = -4.0
-offset_right = 4.0
-offset_bottom = 4.0
-color = Color(1, 0.36556464, 0.07016479, 1)
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 0)
 shape = SubResource("RectangleShape2D_xvcbn")
 
 [node name="TimerVida" type="Timer" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+rotation = 0.7853982
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_k0i8x")
+autoplay = "default"
+frame_progress = 0.018888582
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="TimerVida" to="." method="_on_timer_vida_timeout"]

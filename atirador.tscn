@@ -1,23 +1,47 @@
-[gd_scene load_steps=3 format=3 uid="uid://dksr7db7ap4lc"]
+[gd_scene load_steps=8 format=3 uid="uid://dksr7db7ap4lc"]
 
 [ext_resource type="Script" uid="uid://bid56nuq6acv8" path="res://atirador.gd" id="1_5chg7"]
+[ext_resource type="Texture2D" uid="uid://dq4lkvwyfdjq2" path="res://assets/shooter/shooter1.png" id="2_6easg"]
+[ext_resource type="Texture2D" uid="uid://c6mghha0xpwp" path="res://assets/shooter/shooter2.png" id="3_pper6"]
+[ext_resource type="Texture2D" uid="uid://dey0dtihxl3oh" path="res://assets/shooter/shooter3.png" id="4_bt672"]
+[ext_resource type="Texture2D" uid="uid://wfwf6n48056j" path="res://assets/shooter/shooter4.png" id="5_4iuke"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1su0k"]
-size = Vector2(32, 32)
+size = Vector2(51, 66)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rkj23"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_6easg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_pper6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_bt672")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_4iuke")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="Atirador" type="CharacterBody2D" groups=["inimigos"]]
 script = ExtResource("1_5chg7")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
-color = Color(0.6725799, 0.21418548, 0.5298012, 1)
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, 0)
 shape = SubResource("RectangleShape2D_1su0k")
 
 [node name="TiroTimer" type="Timer" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.3, 0.3)
+sprite_frames = SubResource("SpriteFrames_rkj23")
+autoplay = "default"
+frame_progress = 0.8851347
 
 [connection signal="timeout" from="TiroTimer" to="." method="_on_tiro_timer_timeout"]
