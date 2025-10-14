@@ -3,45 +3,47 @@ extends CanvasLayer
 
 signal melhoria_selecionada(id_carta: String)
 
-# Esta variável PRECISA ser preenchida no Inspetor do Godot.
-@export var botoes: Array[Button]
+@export var card_choices: Array[Control]
 
 var cartas_atuais = []
 
 func _ready():
-	# Garante que temos 3 botões ligados antes de conectar os sinais
-	if botoes.size() == 3:
-		botoes[0].pressed.connect(_on_botao_pressionado.bind(0))
-		botoes[1].pressed.connect(_on_botao_pressionado.bind(1))
-		botoes[2].pressed.connect(_on_botao_pressionado.bind(2))
+	print("TelaMelhorias: Cena pronta.")
+	if card_choices.size() == 3:
+		print("TelaMelhorias: Três instâncias de CardUI foram ligadas no editor. Conectando sinais...")
+		for card_ui_node in card_choices:
+			card_ui_node.card_chosen.connect(_on_card_chosen)
 	else:
-		print("ERRO CRÍTICO: Arraste os 3 nós de botão para a variável 'Botoes' no Inspetor do nó TelaMelhorias!")
+		print("!!!! ERRO CRÍTICO em _ready(): A variável 'Card Choices' no Inspetor não tem 3 elementos. Arraste as instâncias de CardUI para ela.")
 
 func preparar_e_mostrar():
-	# Verificação de segurança para garantir que os botões foram ligados no editor
-	if botoes.size() < 3:
-		print("ERRO: A tela de melhorias não pode ser mostrada porque os botões não foram ligados no Inspetor.")
+	print("--- Arena chamou preparar_e_mostrar() ---")
+	
+	if card_choices.size() < 3:
+		print("!!!! FALHA: A função parou porque a variável 'Card Choices' não tem 3 elementos no Inspetor.")
 		return
 
+	print("TelaMelhorias: Sorteando cartas do CardDB...")
 	cartas_atuais = CardDB.sortear_cartas(3)
-	if cartas_atuais.size() < 3: return
 	
+	if cartas_atuais.size() < 3:
+		print("!!!! FALHA: O CardDB não retornou 3 cartas. Verifique o script CardDB.gd.")
+		return
+	
+	print("TelaMelhorias: Cartas sorteadas com sucesso. IDs:", cartas_atuais)
+	print("TelaMelhorias: Configurando os dados de cada carta na UI...")
 	for i in range(3):
-		var id_carta = cartas_atuais[i]
-		var info_carta = CardDB.get_card_info(id_carta)
-		var botao = botoes[i]
-		
-		if info_carta:
-			botao.text = info_carta["nome"]
-			
-			if info_carta.has("tipo") and info_carta["tipo"] == "corrompida":
-				botao.add_theme_color_override("font_color", Color.CRIMSON)
-			else:
-				botao.remove_theme_color_override("font_color")
+		if card_choices[i]:
+			card_choices[i].set_card_data(cartas_atuais[i])
+		else:
+			print("!!!! FALHA: A carta na posição", i, "não está ligada no Inspetor.")
+			return
 	
+	print("TelaMelhorias: Configuração concluída. Tornando a tela visível agora!")
 	show()
 
-func _on_botao_pressionado(indice_botao):
-	emit_signal("melhoria_selecionada", cartas_atuais[indice_botao])
+func _on_card_chosen(id_carta: String):
+	print("TelaMelhorias: Carta '", id_carta, "' foi escolhida.")
+	emit_signal("melhoria_selecionada", id_carta)
 	hide()
 	get_tree().paused = false

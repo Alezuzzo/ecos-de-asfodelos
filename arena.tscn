@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://swhhkx7vnfua"]
+[gd_scene load_steps=16 format=3 uid="uid://swhhkx7vnfua"]
 
 [ext_resource type="Script" uid="uid://2sj4gixj5wx5" path="res://arena.gd" id="1_444vf"]
 [ext_resource type="PackedScene" uid="uid://4vicljavkaft" path="res://jogador.tscn" id="2_27ga2"]
@@ -8,6 +8,38 @@
 [ext_resource type="PackedScene" uid="uid://e7yr50mqdyod" path="res://fonte_de_vida.tscn" id="4_pbtuc"]
 [ext_resource type="PackedScene" uid="uid://bvxbwfcpx1d1u" path="res://guardiao.tscn" id="5_yokb4"]
 [ext_resource type="PackedScene" uid="uid://y3f0yvohs0o5" path="res://hud.tscn" id="7_pbtuc"]
+[ext_resource type="Texture2D" uid="uid://dj0d0s25tigyk" path="res://assets/cartomante/cartomante1.png" id="9_u834y"]
+[ext_resource type="Texture2D" uid="uid://cgqilplsx50my" path="res://assets/cartomante/cartomante2.png" id="10_w3v2p"]
+[ext_resource type="Texture2D" uid="uid://dl3gxdkj6xss7" path="res://assets/cartomante/cartomante3.png" id="11_1s3fb"]
+[ext_resource type="Texture2D" uid="uid://1jolf655re5" path="res://assets/cartomante/cartomante4.png" id="12_1pekq"]
+[ext_resource type="Texture2D" uid="uid://c4eesh3lot3ap" path="res://assets/cartomante/cartomante5.png" id="13_ffcej"]
+[ext_resource type="Texture2D" uid="uid://dcheldmvos7jo" path="res://assets/cartomante/cartomante6.png" id="14_3vubs"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6p4q2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_u834y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_w3v2p")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_1s3fb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_1pekq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_ffcej")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_3vubs")
+}],
+"loop": true,
+"name": &"default",
+"speed": 3.0
+}]
 
 [node name="Arena" type="Node2D"]
 script = ExtResource("1_444vf")
@@ -16,7 +48,7 @@ cena_fonte_vida = ExtResource("4_pbtuc")
 cena_chefe = ExtResource("5_yokb4")
 
 [node name="Jogador" parent="." instance=ExtResource("2_27ga2")]
-position = Vector2(354, 274)
+position = Vector2(967, 469)
 
 [node name="StartTimer" type="Timer" parent="."]
 one_shot = true
@@ -31,5 +63,18 @@ wait_time = 10.0
 scale = Vector2(0.3, 0.3)
 transform = Transform2D(0.3, 0, 0, 0.3, 0, 0)
 
+[node name="CartomanteSprite" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(1070, 526)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_6p4q2")
+frame = 2
+frame_progress = 0.14003363
+
+[node name="CardActivationTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
 [connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
 [connection signal="timeout" from="EventoTimer" to="." method="_on_evento_timer_timeout"]
+[connection signal="timeout" from="CardActivationTimer" to="." method="_on_card_activation_timer_timeout"]

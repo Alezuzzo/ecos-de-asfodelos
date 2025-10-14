@@ -25,9 +25,6 @@ func _ready():
 	# Pega referências importantes no início
 	jogador_node = $Jogador
 	tamanho_da_tela = get_viewport_rect().size
-	
-	# --- ALTERAÇÃO 1: Passa a referência do HUD para o jogador ---
-	# Isso é necessário para que o jogador possa controlar o timer visual.
 	jogador_node.hud = $HUD
 	
 	# Conecta os sinais
@@ -103,23 +100,20 @@ func iniciar_luta_chefe():
 	chefe.connect("morreu", _on_chefe_morreu)
 	
 func verificar_sinergias(jogador):
-	# Verifica se o jogador já tem a sinergia para não ativar de novo
 	if jogador.tem_baluarte_da_alma:
 		return
 
-	# Define quais cartas são necessárias para a sinergia
 	var cartas_necessarias = ["vontade_de_ferro", "guardiao_caido", "foco_do_penitente"]
 	var tem_todas = true
 	
 	for id_carta in cartas_necessarias:
 		if not id_carta in jogador.cartas_coletadas:
 			tem_todas = false
-			break # Se faltar uma, já para de verificar
+			break
 	
 	if tem_todas:
 		print("SINERGIA ATIVADA: Baluarte da Alma!")
 		jogador.tem_baluarte_da_alma = true
-		# Chama a função no HUD para mostrar o aviso
 		$HUD.mostrar_notificacao("Baluarte da Alma Ativado!")
 
 #-----------------------------------------------------------------------------
@@ -137,16 +131,24 @@ func _on_inimigo_morreu():
 			print("--- ONDA ", onda_atual, " COMPLETA! O CHEFE SE APROXIMA... ---")
 			call_deferred("iniciar_nova_onda")
 		else:
-			print("--- ONDA ", onda_atual, " COMPLETA! ---")
-			get_tree().paused = true
-			$TelaMelhorias.preparar_e_mostrar()
+			print("--- ONDA ", onda_atual, " COMPLETA! Iniciando cooldown para as cartas... ---")
+			# --- CORREÇÃO AQUI: Inicia o timer em vez de mostrar a tela diretamente ---
+			$CardActivationTimer.start()
+
+# --- NOVA FUNÇÃO CHAMADA PELO TIMER DE ATIVAÇÃO DAS CARTAS ---
+func _on_card_activation_timer_timeout():
+	print("Cooldown terminado. Mostrando as cartas agora.")
+	get_tree().paused = true
+	$CartomanteSprite.show()
+	$TelaMelhorias.preparar_e_mostrar()
+# --- FIM DA NOVA FUNÇÃO ---
 
 func _on_chefe_morreu():
 	print("VITÓRIA! O Guardião foi libertado.")
 	get_tree().paused = true
 
 func _on_melhoria_selecionada(id_carta: String):
-	print("Melhoria selecionada: ", id_carta)
+	$CartomanteSprite.hide()
 	if not jogador_node: return
 	
 	if not id_carta in jogador_node.cartas_coletadas:
@@ -155,17 +157,10 @@ func _on_melhoria_selecionada(id_carta: String):
 	match id_carta:
 		"vontade_de_ferro":
 			jogador_node.aumentar_vida_maxima(2)
-		
 		"guardiao_caido":
 			jogador_node.tem_guardiao_caido = true
-		
-		# --- ALTERAÇÃO 2: Chama a função de ativação no jogador ---
-		# Em vez de mexer nas variáveis do jogador diretamente daqui,
-		# nós chamamos a função que preparamos para isso.
 		"foco_do_penitente":
 			jogador_node.ativar_foco_penitente()
-			
-		# Melhorias antigas que podemos remover ou adaptar depois
 		"velocidade_tiro":
 			jogador_node.cadencia_tiro = max(0.1, jogador_node.cadencia_tiro * 0.85)
 		"velocidade_movimento":

@@ -20,11 +20,9 @@ var onda_de_choque_cena = preload("res://onda_de_choque.tscn")
 var hud = null
 
 #-----------------------------------------------------------------------------
-# ESTADO DAS MELHORIAS (FLAGS)
+# ESTADO DAS MELHORIAS E CONTROLE
 #-----------------------------------------------------------------------------
 var pode_atirar = true
-
-# Afinidade da Resiliência
 var cartas_coletadas = []
 var tem_guardiao_caido = false
 var tem_foco_penitente = false
@@ -32,6 +30,10 @@ var foco_penitente_ativo = false
 var tem_baluarte_da_alma = false
 var baluarte_usado_na_onda = false
 var invulneravel = false
+
+# --- NOVA VARIÁVEL PARA O ESTILO ISAAC ---
+# Guarda a última direção em que o jogador atirou. Começa virado para a direita.
+var ultima_direcao_tiro = Vector2.RIGHT
 
 #-----------------------------------------------------------------------------
 # FUNÇÕES DO GODOT
@@ -48,34 +50,10 @@ func _physics_process(delta):
 		if hud:
 			hud.atualizar_timer_foco(progresso)
 
-	# Lógica de Movimento
-	var direcao = Input.get_vector("esquerda", "direita", "cima", "baixo")
-	velocity = direcao * velocidade
-	move_and_slide()
-	
-	# Pega a referência do sprite uma vez
-	var sprite_animado = $AnimatedSprite2D
-	
-	# --- LÓGICA DE ANIMAÇÃO FINAL E COMPLETA ---
-	if velocity.length() > 0: # Se o jogador está se movendo
-		# Prioriza as animações verticais
-		if direcao.y > 0:
-			sprite_animado.play("walk_down")
-		elif direcao.y < 0:
-			# --- CORREÇÃO AQUI: Toca a nova animação de andar para cima ---
-			sprite_animado.play("walk_up") 
-		else:
-			# Se não há movimento vertical, toca a animação lateral
-			sprite_animado.play("walk_side")
-	else: # Se o jogador está parado
-		sprite_animado.play("idle")
-	
-	# Lógica de virar o sprite (flip) baseado na posição do mouse
-	var posicao_do_mouse = get_global_mouse_position()
-	if posicao_do_mouse.x < global_position.x:
-		sprite_animado.flip_h = true
-	else:
-		sprite_animado.flip_h = false
+	# --- FUNÇÕES DE CONTROLE ORGANIZADAS ---
+	handle_movimento()
+	handle_tiro()
+	handle_animacao()
 	
 	# Lógica de limitação da tela
 	var tamanho_da_tela = get_viewport_rect().size
@@ -83,21 +61,71 @@ func _physics_process(delta):
 	global_position.x = clamp(global_position.x, metade_do_tamanho_sprite.x, tamanho_da_tela.x - metade_do_tamanho_sprite.x)
 	global_position.y = clamp(global_position.y, metade_do_tamanho_sprite.y, tamanho_da_tela.y - metade_do_tamanho_sprite.y)
 
-	# Lógica de tiro
-	if Input.is_action_pressed("atirar") and pode_atirar:
-		atirar()
-
 #-----------------------------------------------------------------------------
-# FUNÇÕES DE AÇÃO E EFEITOS
+# NOVAS FUNÇÕES DE CONTROLE (ESTILO ISAAC)
 #-----------------------------------------------------------------------------
 
-func atirar():
+func handle_movimento():
+	var direcao = Input.get_vector("esquerda", "direita", "cima", "baixo")
+	velocity = direcao * velocidade
+	move_and_slide()
+
+func handle_tiro():
+	if not pode_atirar:
+		return
+
+	# Verifica as ações de tiro mapeadas para as setas do teclado
+	if Input.is_action_pressed("shoot_up"):
+		atirar(Vector2.UP)
+	elif Input.is_action_pressed("shoot_down"):
+		atirar(Vector2.DOWN)
+	elif Input.is_action_pressed("shoot_left"):
+		atirar(Vector2.LEFT)
+	elif Input.is_action_pressed("shoot_right"):
+		atirar(Vector2.RIGHT)
+
+func handle_animacao():
+	var sprite_animado = $AnimatedSprite2D
+	
+	# Animação baseada no MOVIMENTO (WASD)
+	if velocity.length() > 0:
+		if velocity.y > 0:
+			sprite_animado.play("walk_down")
+		elif velocity.y < 0:
+			sprite_animado.play("walk_up")
+		else: # Movimento apenas horizontal
+			sprite_animado.play("walk_side")
+	else:
+		# Se PARADO, animação baseada na ÚLTIMA DIREÇÃO DE TIRO
+		if ultima_direcao_tiro.y < 0:
+			sprite_animado.play("walk_up") # Corpo virado para cima
+		elif ultima_direcao_tiro.y > 0:
+			sprite_animado.play("walk_down") # Corpo virado para baixo
+		else:
+			# Se o último tiro foi horizontal, usa a animação de lado/parado
+			sprite_animado.play("idle") 
+
+	# Lógica de virar o sprite (flip) baseada na ÚLTIMA DIREÇÃO DE TIRO
+	if ultima_direcao_tiro.x < 0:
+		sprite_animado.flip_h = true
+	elif ultima_direcao_tiro.x > 0:
+		sprite_animado.flip_h = false
+
+#-----------------------------------------------------------------------------
+# FUNÇÕES DE AÇÃO E EFEITOS (ATUALIZADAS)
+#-----------------------------------------------------------------------------
+
+func atirar(direcao_tiro: Vector2): # Agora recebe a direção do tiro
 	pode_atirar = false
+	ultima_direcao_tiro = direcao_tiro # ATUALIZA A "MEMÓRIA" DA MIRA
+	
 	var projetil = projetil_cena.instantiate()
 	projetil.position = position
-	projetil.rotation = global_position.direction_to(get_global_mouse_position()).angle()
-	projetil.dano = dano_projetil
 	
+	# A rotação do projétil é baseada na direção do teclado
+	projetil.rotation = direcao_tiro.angle()
+	
+	projetil.dano = dano_projetil
 	if tem_foco_penitente and foco_penitente_ativo:
 		projetil.dano *= 3
 		foco_penitente_ativo = false

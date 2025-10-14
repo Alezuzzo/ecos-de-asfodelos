@@ -7,17 +7,20 @@ const CARDS = {
 	"vontade_de_ferro": {
 		"nome": "Vontade de Ferro",
 		"descricao": "Sua determinação fortalece sua alma. (+1 Coração Máximo)",
-		"afinidade": "Resiliência"
+		"afinidade": "Resiliência",
+		"imagem": "res://assets/cartas/afinidade resiliencia/vontadedeferro.png"
 	},
 	"guardiao_caido": {
 		"nome": "Guardião Caído",
 		"descricao": "Ao ser atingido, libera uma onda de choque que repele inimigos.",
-		"afinidade": "Resiliência"
+		"afinidade": "Resiliência",
+		"imagem": "res://assets/cartas/afinidade resiliencia/GuardiaoCaido.png"
 	},
 	"foco_do_penitente": {
 		"nome": "Foco do Penitente",
 		"descricao": "Após 7s sem receber dano, seu próximo tiro causa 3x mais dano.",
-		"afinidade": "Resiliência"
+		"afinidade": "Resiliência",
+		"imagem": "res://assets/cartas/afinidade resiliencia/focopenitente.png"
 	},
 }
 
@@ -26,19 +29,22 @@ const CORRUPTED_CARDS = {
 		"nome": "Coroa do Mártir",
 		"descricao": "PODER: Seus projéteis são teleguiados. PREÇO: Você não pode mais se curar.",
 		"afinidade": "Corrompida",
-		"tipo": "corrompida"
+		"tipo": "corrompida",
+		"imagem": "res://assets/cartas/afinidade resiliencia/vontadedeferro.png"
 	},
 	"coracao_de_vidro": {
 		"nome": "Coração de Vidro",
 		"descricao": "PODER: Todo o seu dano é dobrado. PREÇO: Todo dano que você recebe é dobrado.",
 		"afinidade": "Corrompida",
-		"tipo": "corrompida"
+		"tipo": "corrompida",
+		"imagem": "res://assets/cartas/afinidade resiliencia/vontadedeferro.png"
 	},
 	"abraco_do_vazio": {
 		"nome": "Abraço do Vazio",
 		"descricao": "PODER: Uma aura de dano orbita você. PREÇO: Sua cadência de tiro e velocidade dos projéteis são reduzidas pela metade.",
 		"afinidade": "Corrompida",
-		"tipo": "corrompida"
+		"tipo": "corrompida",
+		"imagem": "res://assets/cartas/afinidade resiliencia/vontadedeferro.png"
 	},
 }
 

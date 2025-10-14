@@ -26,9 +26,9 @@ offset_bottom = 36.0
 [node name="FocoTimerUI" type="ProgressBar" parent="."]
 visible = false
 custom_minimum_size = Vector2(200, 20)
-offset_left = 63.0
+offset_left = -60.0
 offset_top = 3441.0
-offset_right = 821.0
+offset_right = 698.0
 offset_bottom = 3558.0
 theme_override_styles/background = SubResource("StyleBoxFlat_37p78")
 theme_override_styles/fill = SubResource("StyleBoxFlat_64ctp")
