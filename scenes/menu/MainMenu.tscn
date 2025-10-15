@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://daggj8pnao8tm"]
+[gd_scene load_steps=3 format=3 uid="uid://daggj8pnao8tm"]
 
 [ext_resource type="Script" uid="uid://dmqqaf4bbofe6" path="res://scenes/menu/MainMenu.gd" id="1_m2yvp"]
+[ext_resource type="Texture2D" uid="uid://donobwhjefrxp" path="res://assets/menu/bg_asfodelos.png" id="2_s3dsm"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -18,6 +19,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("2_s3dsm")
 
 [node name="Root" type="MarginContainer" parent="."]
 layout_mode = 1
