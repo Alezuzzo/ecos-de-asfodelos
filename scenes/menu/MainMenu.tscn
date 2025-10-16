@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://daggj8pnao8tm"]
+[gd_scene load_steps=5 format=3 uid="uid://daggj8pnao8tm"]
 
 [ext_resource type="Script" uid="uid://dmqqaf4bbofe6" path="res://scenes/menu/MainMenu.gd" id="1_m2yvp"]
 [ext_resource type="Texture2D" uid="uid://donobwhjefrxp" path="res://assets/menu/bg_asfodelos.png" id="2_s3dsm"]
+[ext_resource type="FontFile" uid="uid://cccl75xnkimhx" path="res://assets/fonts/Cinzel-VariableFont_wght.ttf" id="3_2nud1"]
+[ext_resource type="FontFile" uid="uid://dn136u0lunec2" path="res://assets/fonts/Texturina-VariableFont_opsz,wght.ttf" id="4_iv2fv"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -12,7 +14,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_m2yvp")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="BG" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,6 +22,29 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_s3dsm")
+
+[node name="TitleLabel" type="Label" parent="BG"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -383.0
+offset_top = 48.0
+offset_right = 383.0
+offset_bottom = 345.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.88235295, 0.8156863, 0.60784316, 1)
+theme_override_colors/font_shadow_color = Color(0.88235295, 0.8156863, 0.60784316, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 5
+theme_override_constants/shadow_outline_size = 7
+theme_override_fonts/font = ExtResource("3_2nud1")
+theme_override_font_sizes/font_size = 108
+text = "Ecos de 
+Ásfodelos"
+horizontal_alignment = 1
 
 [node name="Root" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -35,23 +60,73 @@ theme_override_constants/margin_bottom = 48
 
 [node name="VBox" type="VBoxContainer" parent="Root"]
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_constants/separation = 14
 alignment = 1
 
-[node name="StartButton" type="Button" parent="Root/VBox"]
+[node name="ItemStart" type="HBoxContainer" parent="Root/VBox"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="ArrowStart" type="Label" parent="Root/VBox/ItemStart"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_iv2fv")
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
+[node name="StartButton" type="Button" parent="Root/VBox/ItemStart"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(0.9137255, 0.88235295, 0.76862746, 1)
+theme_override_fonts/font = ExtResource("4_iv2fv")
+theme_override_font_sizes/font_size = 47
 text = "START"
+flat = true
 
-[node name="OptionsButton" type="Button" parent="Root/VBox"]
+[node name="ItemOptions" type="HBoxContainer" parent="Root/VBox"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="ArrowOptions" type="Label" parent="Root/VBox/ItemOptions"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_iv2fv")
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
+[node name="OptionsButton" type="Button" parent="Root/VBox/ItemOptions"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(0.9137255, 0.88235295, 0.76862746, 1)
+theme_override_constants/align_to_largest_stylebox = 0
+theme_override_fonts/font = ExtResource("4_iv2fv")
+theme_override_font_sizes/font_size = 47
 text = "OPTIONS"
+flat = true
 
-[node name="QuitButton" type="Button" parent="Root/VBox"]
+[node name="ItemQuit" type="HBoxContainer" parent="Root/VBox"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="ArrowQuit" type="Label" parent="Root/VBox/ItemQuit"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_iv2fv")
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
+[node name="QuitButton" type="Button" parent="Root/VBox/ItemQuit"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(0.9137255, 0.88235295, 0.76862746, 1)
+theme_override_fonts/font = ExtResource("4_iv2fv")
+theme_override_font_sizes/font_size = 47
 text = "QUIT"
+flat = true
