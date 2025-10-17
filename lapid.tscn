@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://vxm8omh4cl65"]
+
+[ext_resource type="Texture2D" uid="uid://bi4u4en5ddhrn" path="res://assets/ambient/lapid.png" id="1_5hhuo"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2t48u"]
+height = 31.999998
+
+[node name="Lapid" type="StaticBody2D"]
+
+[node name="Lapid" type="Sprite2D" parent="."]
+position = Vector2(0, -41)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_5hhuo")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_2t48u")

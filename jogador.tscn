@@ -23,9 +23,6 @@
 [ext_resource type="Texture2D" uid="uid://h3pihv7eaor7" path="res://assets/jeremy/walk_up/jeremy_walkup5.png" id="21_1xlih"]
 [ext_resource type="Texture2D" uid="uid://bnoxpijoxwn7b" path="res://assets/jeremy/walk_up/jeremy_walkup6.png" id="22_cax3v"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_c2wt1"]
-size = Vector2(42, 83)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_82vy7"]
 animations = [{
 "frames": [{
@@ -112,12 +109,12 @@ animations = [{
 "speed": 12.0
 }]
 
-[node name="jogador" type="CharacterBody2D" groups=["jogador"]]
-script = ExtResource("1_yuxfx")
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sqpra"]
+radius = 18.0
+height = 36.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 5.5)
-shape = SubResource("RectangleShape2D_c2wt1")
+[node name="Jogador" type="CharacterBody2D" groups=["jogador"]]
+script = ExtResource("1_yuxfx")
 
 [node name="TimerCadencia" type="Timer" parent="."]
 
@@ -130,11 +127,16 @@ wait_time = 2.0
 one_shot = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -48)
 scale = Vector2(0.3, 0.3)
 sprite_frames = SubResource("SpriteFrames_82vy7")
 animation = &"walk_up"
 autoplay = "idle"
 frame_progress = 0.4691008
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, -17)
+shape = SubResource("CapsuleShape2D_sqpra")
 
 [connection signal="timeout" from="TimerCadencia" to="." method="_on_timer_cadencia_timeout"]
 [connection signal="timeout" from="FocoTimer" to="." method="_on_foco_timer_timeout"]

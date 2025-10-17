@@ -23,7 +23,7 @@ var tamanho_da_tela: Vector2
 
 func _ready():
 	# Pega referências importantes no início
-	jogador_node = $Jogador
+	jogador_node = $YSortContainer/Jogador
 	tamanho_da_tela = get_viewport_rect().size
 	jogador_node.hud = $HUD
 	

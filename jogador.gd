@@ -50,17 +50,25 @@ func _physics_process(delta):
 		if hud:
 			hud.atualizar_timer_foco(progresso)
 
-	# --- FUNÇÕES DE CONTROLE ORGANIZADAS ---
+	# Lógica de Movimento e Tiro (permanece igual)
 	handle_movimento()
 	handle_tiro()
 	handle_animacao()
 	
-	# Lógica de limitação da tela
+	# --- LÓGICA DE LIMITAÇÃO DE TELA CORRIGIDA ---
 	var tamanho_da_tela = get_viewport_rect().size
-	var metade_do_tamanho_sprite = $CollisionShape2D.shape.size / 2.0
-	global_position.x = clamp(global_position.x, metade_do_tamanho_sprite.x, tamanho_da_tela.x - metade_do_tamanho_sprite.x)
-	global_position.y = clamp(global_position.y, metade_do_tamanho_sprite.y, tamanho_da_tela.y - metade_do_tamanho_sprite.y)
-
+	# Pega a referência da forma de colisão
+	var collision_shape = $CollisionShape2D.shape
+	
+	# Pega a "metade da largura" usando o raio da cápsula
+	var metade_largura = collision_shape.radius
+	# Pega a "metade da altura" usando a altura total da cápsula
+	var metade_altura = collision_shape.height / 2.0
+	
+	# Usa os novos valores para limitar a posição
+	global_position.x = clamp(global_position.x, metade_largura, tamanho_da_tela.x - metade_largura)
+	global_position.y = clamp(global_position.y, metade_altura, tamanho_da_tela.y - metade_altura)
+	# --- FIM DA CORREÇÃO ---
 #-----------------------------------------------------------------------------
 # NOVAS FUNÇÕES DE CONTROLE (ESTILO ISAAC)
 #-----------------------------------------------------------------------------
