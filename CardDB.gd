@@ -1,8 +1,11 @@
 # CardDB.gd
 extends Node
 
+# A chance de uma carta corrompida aparecer (0.25 = 25%)
+# Você pode ajustar este valor para balancear o jogo!
 const CHANCE_CARTA_CORROMPIDA = 0.25
 
+# Baralho de cartas normais
 const CARDS = {
 	"vontade_de_ferro": {
 		"nome": "Vontade de Ferro",
@@ -24,33 +27,41 @@ const CARDS = {
 	},
 }
 
+# Baralho de cartas corrompidas
 const CORRUPTED_CARDS = {
 	"coroa_do_martir": {
 		"nome": "Coroa do Mártir",
 		"descricao": "PODER: Seus projéteis são teleguiados. PREÇO: Você não pode mais se curar.",
 		"afinidade": "Corrompida",
 		"tipo": "corrompida",
-		"imagem": "res://assets/cartas/afinidade resiliencia/vontadedeferro.png"
+		"imagem": "res://assets/cartas/corrompidas/coroa_do_martir.png",
+		"animado": true
 	},
 	"coracao_de_vidro": {
 		"nome": "Coração de Vidro",
 		"descricao": "PODER: Todo o seu dano é dobrado. PREÇO: Todo dano que você recebe é dobrado.",
 		"afinidade": "Corrompida",
 		"tipo": "corrompida",
-		"imagem": "res://assets/cartas/afinidade resiliencia/vontadedeferro.png"
+		"imagem": "res://assets/cartas/corrompidas/coracao_de_vidro.png"
 	},
 	"abraco_do_vazio": {
 		"nome": "Abraço do Vazio",
 		"descricao": "PODER: Uma aura de dano orbita você. PREÇO: Sua cadência de tiro e velocidade dos projéteis são reduzidas pela metade.",
 		"afinidade": "Corrompida",
 		"tipo": "corrompida",
-		"imagem": "res://assets/cartas/afinidade resiliencia/vontadedeferro.png"
+		"imagem": "res://assets/cartas/corrompidas/abraco_do_vazio.png"
 	},
 }
 
+# --- FUNÇÃO DE SORTEIO RESTAURADA PARA A VERSÃO FINAL E ALEATÓRIA ---
 func sortear_cartas(quantidade = 3):
 	var sorteadas = []
+	
+	# Decide se uma carta corrompida vai aparecer
 	if randf() < CHANCE_CARTA_CORROMPIDA and CORRUPTED_CARDS.size() > 0:
+		# Sim! Sorteia 1 carta corrompida e 2 normais.
+		print("DEBUG: Uma carta corrompida foi sorteada!")
+		
 		var chaves_corrompidas = CORRUPTED_CARDS.keys()
 		chaves_corrompidas.shuffle()
 		sorteadas.append(chaves_corrompidas[0])
@@ -60,14 +71,20 @@ func sortear_cartas(quantidade = 3):
 		sorteadas.append(chaves_normais[0])
 		sorteadas.append(chaves_normais[1])
 		
+		# Embaralha o resultado final para que a corrompida não seja sempre a primeira
 		sorteadas.shuffle()
 	else:
+		# Não, serão 3 cartas normais.
+		print("DEBUG: Nenhuma carta corrompida foi sorteada.")
+		
 		var chaves = CARDS.keys()
 		chaves.shuffle()
 		for i in range(min(quantidade, chaves.size())):
 			sorteadas.append(chaves[i])
+			
 	return sorteadas
 
+# Função auxiliar (permanece igual)
 func get_card_info(id_carta):
 	if CARDS.has(id_carta):
 		return CARDS[id_carta]

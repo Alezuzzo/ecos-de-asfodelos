@@ -24,6 +24,7 @@ offset_right = 36.0
 offset_bottom = 36.0
 
 [node name="FocoTimerUI" type="ProgressBar" parent="."]
+visible = false
 custom_minimum_size = Vector2(200, 20)
 anchors_preset = 4
 anchor_top = 0.5
