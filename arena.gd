@@ -18,16 +18,16 @@ var onda_do_chefe = 5
 var tamanho_da_tela: Vector2
 
 #-----------------------------------------------------------------------------
-# FUNÇÕES PRINCIPAIS DO GODOT
+# FUNÇÕES NATIVAS DO GODOT
 #-----------------------------------------------------------------------------
 
 func _ready():
-	# Pega referências importantes no início
+	# Pega referências importantes no início do jogo
 	jogador_node = $YSortContainer/Jogador
 	tamanho_da_tela = get_viewport_rect().size
 	jogador_node.hud = $HUD
 	
-	# Conecta os sinais
+	# Conecta os sinais entre os diferentes componentes do jogo
 	jogador_node.saude_alterada.connect($HUD.atualizar_coracoes)
 	$TelaMelhorias.melhoria_selecionada.connect(_on_melhoria_selecionada)
 	
@@ -43,7 +43,7 @@ func _ready():
 #-----------------------------------------------------------------------------
 
 func iniciar_nova_onda():
-	# Reseta a flag do Baluarte no jogador
+	# Reseta a flag do "Baluarte da Alma" no início de cada onda
 	if is_instance_valid(jogador_node):
 		jogador_node.baluarte_usado_na_onda = false
 	
@@ -68,17 +68,19 @@ func spawnar_inimigo():
 	var inimigo = inimigo_escolhido.instantiate()
 	inimigo.connect("morreu", _on_inimigo_morreu)
 	
+	# Adiciona o inimigo dentro do container de ordenação para que ele interaja com o cenário
+	$YSortContainer.add_child(inimigo)
+	
 	var spawn_pos = Vector2()
 	var borda = randi() % 4
 	match borda:
-		0: spawn_pos = Vector2(randf_range(0, tamanho_da_tela.x), -50)
-		1: spawn_pos = Vector2(randf_range(0, tamanho_da_tela.x), tamanho_da_tela.y + 50)
-		2: spawn_pos = Vector2(-50, randf_range(0, tamanho_da_tela.y))
-		3: spawn_pos = Vector2(tamanho_da_tela.x + 50, randf_range(0, tamanho_da_tela.y))
+		0: spawn_pos = Vector2(randf_range(50, tamanho_da_tela.x - 50), 50)
+		1: spawn_pos = Vector2(randf_range(50, tamanho_da_tela.x - 50), tamanho_da_tela.y - 50)
+		2: spawn_pos = Vector2(50, randf_range(50, tamanho_da_tela.y - 50))
+		3: spawn_pos = Vector2(tamanho_da_tela.x - 50, randf_range(50, tamanho_da_tela.y - 50))
 			
 	inimigo.global_position = spawn_pos
 	inimigo.jogador = jogador_node
-	add_child(inimigo)
 
 #-----------------------------------------------------------------------------
 # LÓGICA DO CHEFE
@@ -95,7 +97,7 @@ func iniciar_luta_chefe():
 	var chefe = cena_chefe.instantiate()
 	chefe.position = tamanho_da_tela / 2
 	chefe.jogador = jogador_node
-	add_child(chefe)
+	$YSortContainer.add_child(chefe)
 	
 	chefe.connect("morreu", _on_chefe_morreu)
 	
@@ -124,7 +126,6 @@ func _on_inimigo_morreu():
 	if luta_contra_chefe_ativa: return
 	
 	inimigos_vivos -= 1
-	print("Inimigo derrotado! Restam: ", inimigos_vivos)
 	
 	if inimigos_vivos <= 0:
 		if onda_atual + 1 == onda_do_chefe:
@@ -132,16 +133,12 @@ func _on_inimigo_morreu():
 			call_deferred("iniciar_nova_onda")
 		else:
 			print("--- ONDA ", onda_atual, " COMPLETA! Iniciando cooldown para as cartas... ---")
-			# --- CORREÇÃO AQUI: Inicia o timer em vez de mostrar a tela diretamente ---
 			$CardActivationTimer.start()
 
-# --- NOVA FUNÇÃO CHAMADA PELO TIMER DE ATIVAÇÃO DAS CARTAS ---
 func _on_card_activation_timer_timeout():
-	print("Cooldown terminado. Mostrando as cartas agora.")
 	get_tree().paused = true
 	$CartomanteSprite.show()
 	$TelaMelhorias.preparar_e_mostrar()
-# --- FIM DA NOVA FUNÇÃO ---
 
 func _on_chefe_morreu():
 	print("VITÓRIA! O Guardião foi libertado.")
@@ -149,7 +146,7 @@ func _on_chefe_morreu():
 
 func _on_melhoria_selecionada(id_carta: String):
 	$CartomanteSprite.hide()
-	if not jogador_node: return
+	if not is_instance_valid(jogador_node): return
 	
 	if not id_carta in jogador_node.cartas_coletadas:
 		jogador_node.cartas_coletadas.append(id_carta)
@@ -161,12 +158,8 @@ func _on_melhoria_selecionada(id_carta: String):
 			jogador_node.tem_guardiao_caido = true
 		"foco_do_penitente":
 			jogador_node.ativar_foco_penitente()
-		"velocidade_tiro":
-			jogador_node.cadencia_tiro = max(0.1, jogador_node.cadencia_tiro * 0.85)
-		"velocidade_movimento":
-			jogador_node.velocidade *= 1.15
-		"dano_projetil":
-			jogador_node.dano_projetil += 1
+		"coroa_do_martir":
+			jogador_node.ativar_coroa_do_martir()
 			
 	verificar_sinergias(jogador_node)
 	iniciar_nova_onda()

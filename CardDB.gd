@@ -37,20 +37,6 @@ const CORRUPTED_CARDS = {
 		"imagem": "res://assets/cartas/corrompidas/coroa_do_martir.png",
 		"animado": true
 	},
-	"coracao_de_vidro": {
-		"nome": "Coração de Vidro",
-		"descricao": "PODER: Todo o seu dano é dobrado. PREÇO: Todo dano que você recebe é dobrado.",
-		"afinidade": "Corrompida",
-		"tipo": "corrompida",
-		"imagem": "res://assets/cartas/corrompidas/coracao_de_vidro.png"
-	},
-	"abraco_do_vazio": {
-		"nome": "Abraço do Vazio",
-		"descricao": "PODER: Uma aura de dano orbita você. PREÇO: Sua cadência de tiro e velocidade dos projéteis são reduzidas pela metade.",
-		"afinidade": "Corrompida",
-		"tipo": "corrompida",
-		"imagem": "res://assets/cartas/corrompidas/abraco_do_vazio.png"
-	},
 }
 
 # --- FUNÇÃO DE SORTEIO RESTAURADA PARA A VERSÃO FINAL E ALEATÓRIA ---
