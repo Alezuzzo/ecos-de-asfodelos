@@ -2,6 +2,7 @@
 extends CharacterBody2D
 
 signal saude_alterada(saude_atual, saude_maxima)
+signal morreu
 
 #-----------------------------------------------------------------------------
 # ATRIBUTOS DO JOGADOR
@@ -160,6 +161,7 @@ func sofrer_dano(quantidade):
 		
 	if saude_atual <= 0:
 		print("JOGADOR MORREU!")
+		emit_signal("morreu")
 		queue_free()
 
 func piscar():

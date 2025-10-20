@@ -4,6 +4,7 @@ extends Node2D
 @export var cenas_inimigos: Array[PackedScene]
 @export var cena_fonte_vida: PackedScene
 @export var cena_chefe: PackedScene
+@export var game_over_screen_cena: PackedScene
 
 # --- Variáveis de Estado ---
 var jogador_node = null
@@ -30,6 +31,7 @@ func _ready():
 	# Conecta os sinais entre os diferentes componentes do jogo
 	jogador_node.saude_alterada.connect($HUD.atualizar_coracoes)
 	$TelaMelhorias.melhoria_selecionada.connect(_on_melhoria_selecionada)
+	jogador_node.morreu.connect(_on_jogador_morreu) # Conexão para o Game Over
 	
 	# Manda o HUD se desenhar pela primeira vez
 	$HUD.atualizar_coracoes(jogador_node.saude_atual, jogador_node.saude_maxima)
@@ -43,7 +45,6 @@ func _ready():
 #-----------------------------------------------------------------------------
 
 func iniciar_nova_onda():
-	# Reseta a flag do "Baluarte da Alma" no início de cada onda
 	if is_instance_valid(jogador_node):
 		jogador_node.baluarte_usado_na_onda = false
 	
@@ -68,7 +69,6 @@ func spawnar_inimigo():
 	var inimigo = inimigo_escolhido.instantiate()
 	inimigo.connect("morreu", _on_inimigo_morreu)
 	
-	# Adiciona o inimigo dentro do container de ordenação para que ele interaja com o cenário
 	$YSortContainer.add_child(inimigo)
 	
 	var spawn_pos = Vector2()
@@ -95,6 +95,7 @@ func iniciar_luta_chefe():
 		inimigo.queue_free()
 		
 	var chefe = cena_chefe.instantiate()
+	chefe.name = "Guardiao" # Damos um nome para encontrá-lo depois
 	chefe.position = tamanho_da_tela / 2
 	chefe.jogador = jogador_node
 	$YSortContainer.add_child(chefe)
@@ -129,10 +130,8 @@ func _on_inimigo_morreu():
 	
 	if inimigos_vivos <= 0:
 		if onda_atual + 1 == onda_do_chefe:
-			print("--- ONDA ", onda_atual, " COMPLETA! O CHEFE SE APROXIMA... ---")
 			call_deferred("iniciar_nova_onda")
 		else:
-			print("--- ONDA ", onda_atual, " COMPLETA! Iniciando cooldown para as cartas... ---")
 			$CardActivationTimer.start()
 
 func _on_card_activation_timer_timeout():
@@ -170,9 +169,43 @@ func _on_start_timer_timeout():
 func _on_evento_timer_timeout():
 	if randf() < 0.3:
 		var fonte = cena_fonte_vida.instantiate()
-		fonte.global_position = Vector2(
-			randf_range(50, tamanho_da_tela.x - 50),
-			randf_range(50, tamanho_da_tela.y - 50)
-		)
+		fonte.global_position = Vector2(randf_range(50, tamanho_da_tela.x - 50), randf_range(50, tamanho_da_tela.y - 50))
 		add_child(fonte)
 		print("FONTE DE VIDA APARECEU!")
+
+#-----------------------------------------------------------------------------
+# --- NOVAS FUNÇÕES DE GAME OVER ---
+#-----------------------------------------------------------------------------
+
+func _on_jogador_morreu():
+	get_tree().call_deferred("set_pause", true)
+	
+	var progresso_percent = 0.0
+	var max_progresso = float(onda_do_chefe)
+	
+	if luta_contra_chefe_ativa:
+		var chefe = $YSortContainer.get_node_or_null("Guardiao")
+		if is_instance_valid(chefe):
+			var progresso_do_chefe = 1.0 - (chefe.vida_atual / float(chefe.vida_maxima))
+			progresso_percent = ((max_progresso - 1.0) + progresso_do_chefe) / max_progresso * 100.0
+	else:
+		progresso_percent = (float(onda_atual) - 1.0) / max_progresso * 100.0
+		
+	var game_over_screen = game_over_screen_cena.instantiate()
+	add_child(game_over_screen)
+	
+	game_over_screen.retry_pressed.connect(_on_retry_pressed)
+	game_over_screen.quit_pressed.connect(_on_quit_pressed)
+	
+	# SUBSTITUA PELOS SEUS ASSETS REAIS
+	var textura_inimigo = load("res://assets/gameover/boss1.png") 
+	var citacao = '"Você parecia forte. Pena que sua alma agora é minha."'
+	game_over_screen.setup_screen(progresso_percent, textura_inimigo, citacao)
+
+func _on_retry_pressed():
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+func _on_quit_pressed():
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/menu/MainMenu.tscn")

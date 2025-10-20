@@ -1,0 +1,62 @@
+[gd_scene load_steps=5 format=3 uid="uid://h56oto8nao0"]
+
+[ext_resource type="Script" uid="uid://cghbu3q3878ye" path="res://GameOverScreen.gd" id="1_gt22q"]
+[ext_resource type="Texture2D" uid="uid://cl8c3dkn2jrib" path="res://assets/gameover/bg_asfodelos.png" id="2_l4tlu"]
+[ext_resource type="Texture2D" uid="uid://bksoyiihxarmf" path="res://assets/gameover/boss1.png" id="2_w3hxg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gt22q"]
+bg_color = Color(0.91947335, 0.4456666, 0.15586019, 1)
+
+[node name="GameOverScreen" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_gt22q")
+
+[node name="Background" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -463.0
+offset_bottom = 437.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_l4tlu")
+expand_mode = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="Background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Background/CenterContainer"]
+layout_mode = 2
+
+[node name="EnemyImage" type="TextureRect" parent="Background/CenterContainer/VBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_w3hxg")
+
+[node name="QuoteLabel" type="Label" parent="Background/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Você parecia forte. Pena que sua alma agora é minha."
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="Background/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(400, 30)
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_gt22q")
+show_percentage = false
+
+[node name="RetryButton" type="Button" parent="Background/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Repetir"
+
+[node name="QuitButton" type="Button" parent="Background/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Voltar para o menu principal
+"
+
+[connection signal="pressed" from="Background/CenterContainer/VBoxContainer/RetryButton" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="Background/CenterContainer/VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]
