@@ -128,10 +128,12 @@ cooldown_ataque_f1 = 2.0
 [node name="SpriteAnimado" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.3, 0.3)
 sprite_frames = SubResource("SpriteFrames_unner")
-animation = &"fase_2_idle"
+animation = &"fase_1_idle"
 autoplay = "fase_1_idle"
+frame_progress = 0.517723
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(1, 15)
 shape = SubResource("RectangleShape2D_jchh4")
 
