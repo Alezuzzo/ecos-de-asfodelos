@@ -1,18 +1,60 @@
-[gd_scene load_steps=4 format=3 uid="uid://d0fxcebl8axyj"]
+[gd_scene load_steps=12 format=3 uid="uid://d0fxcebl8axyj"]
 
 [ext_resource type="Script" uid="uid://c8i7bkx53d4v4" path="res://onda_de_choque.gd" id="1_7k3lq"]
-[ext_resource type="Texture2D" uid="uid://dd30kqgl373b3" path="res://assets/coracao_vida/coracao_cheio.png" id="2_a3dba"]
+[ext_resource type="Texture2D" uid="uid://cc26l8jjro6on" path="res://assets/efeitos/guardiaocaidoefeito/guardiaocaidoefeito1.png" id="2_n5iru"]
+[ext_resource type="Texture2D" uid="uid://bya7fnju71qni" path="res://assets/efeitos/guardiaocaidoefeito/guardiaocaidoefeito2.png" id="3_r5jta"]
+[ext_resource type="Texture2D" uid="uid://c5epcnqde4xr6" path="res://assets/efeitos/guardiaocaidoefeito/guardiaocaidoefeito3.png" id="4_hyawk"]
+[ext_resource type="Texture2D" uid="uid://dwpqr3kphok7a" path="res://assets/efeitos/guardiaocaidoefeito/guardiaocaidoefeito4.png" id="5_24jwi"]
+[ext_resource type="Texture2D" uid="uid://o4grt6r5d2u8" path="res://assets/efeitos/guardiaocaidoefeito/guardiaocaidoefeito5.png" id="6_7mk0h"]
+[ext_resource type="Texture2D" uid="uid://cgsycqsk3j8c5" path="res://assets/efeitos/guardiaocaidoefeito/guardiaocaidoefeito6.png" id="7_m2ukd"]
+[ext_resource type="Texture2D" uid="uid://cahklufkue00q" path="res://assets/efeitos/guardiaocaidoefeito/guardiaocaidoefeito7.png" id="8_tb414"]
+[ext_resource type="Texture2D" uid="uid://cnyw1mkrwskt1" path="res://assets/efeitos/guardiaocaidoefeito/guardiaocaidoefeito8.png" id="9_dh1da"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_b0jm8"]
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_i4iah"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_n5iru")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_r5jta")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_hyawk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_24jwi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_7mk0h")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_m2ukd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_tb414")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_dh1da")
+}],
+"loop": true,
+"name": &"default",
+"speed": 14.0
+}]
+
 [node name="OndaDeChoque" type="Area2D"]
 script = ExtResource("1_7k3lq")
+forca_repulsao = 10000.0
+raio_final = 2000.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_b0jm8")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.1, 0.1)
-texture = ExtResource("2_a3dba")
+sprite_frames = SubResource("SpriteFrames_i4iah")
+frame_progress = 0.0028989404
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
