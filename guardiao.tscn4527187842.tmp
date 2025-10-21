@@ -123,7 +123,17 @@ size = Vector2(94, 144)
 script = ExtResource("1_jchh4")
 vida_maxima = 150
 velocidade = 200.0
+dano_por_toque = null
+stop_distance = null
+pushback_force = null
+stun_duration_pos_ataque = null
 cooldown_ataque_f1 = 2.0
+tempo_aviso_investida = null
+multiplicador_vel_investida = null
+num_projeteis_salva = null
+num_projeteis_circulo = null
+cooldown_ataque_f2 = null
+multiplicador_vel_f2 = null
 
 [node name="SpriteAnimado" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.3, 0.3)
@@ -144,9 +154,5 @@ one_shot = true
 wait_time = 3.0
 one_shot = true
 
-[node name="StunTimer" type="Timer" parent="."]
-one_shot = true
-
 [connection signal="timeout" from="DanoCooldown" to="." method="_on_dano_cooldown_timeout"]
 [connection signal="timeout" from="AtaqueCooldown" to="." method="_on_ataque_cooldown_timeout"]
-[connection signal="timeout" from="StunTimer" to="." method="_on_stun_timer_timeout"]
