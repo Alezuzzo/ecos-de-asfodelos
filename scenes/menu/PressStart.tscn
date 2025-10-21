@@ -4,6 +4,21 @@
 [ext_resource type="Texture2D" uid="uid://donobwhjefrxp" path="res://assets/menu/bg_asfodelos.png" id="2_a35nf"]
 [ext_resource type="FontFile" uid="uid://cccl75xnkimhx" path="res://assets/fonts/Cinzel-VariableFont_wght.ttf" id="3_lr05n"]
 
+[sub_resource type="Animation" id="Animation_a35nf"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
 [sub_resource type="Animation" id="Animation_0aaj4"]
 resource_name = "blink"
 length = 1.2
@@ -19,21 +34,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [Color(0.003921569, 0.003921569, 0.003921569, 0.003921569), Color(1, 1, 1, 0.2), Color(1, 1, 1, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_a35nf"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_lr05n"]
@@ -56,19 +56,22 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -150.0
+offset_bottom = 90.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_a35nf")
+expand_mode = 5
 
 [node name="TitleLabel" type="Label" parent="Backgroud"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -383.0
-offset_top = 48.0
-offset_right = 383.0
-offset_bottom = 345.0
+offset_left = -390.0
+offset_top = 160.0
+offset_right = 376.0
+offset_bottom = 457.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(0.88235295, 0.8156863, 0.60784316, 1)
 theme_override_colors/font_shadow_color = Color(0.88235295, 0.8156863, 0.60784316, 1)
