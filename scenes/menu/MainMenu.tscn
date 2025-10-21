@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://daggj8pnao8tm"]
+[gd_scene load_steps=6 format=3 uid="uid://daggj8pnao8tm"]
 
 [ext_resource type="Script" uid="uid://dmqqaf4bbofe6" path="res://scenes/menu/MainMenu.gd" id="1_m2yvp"]
 [ext_resource type="Texture2D" uid="uid://donobwhjefrxp" path="res://assets/menu/bg_asfodelos.png" id="2_s3dsm"]
 [ext_resource type="FontFile" uid="uid://cccl75xnkimhx" path="res://assets/fonts/Cinzel-VariableFont_wght.ttf" id="3_2nud1"]
 [ext_resource type="FontFile" uid="uid://dn136u0lunec2" path="res://assets/fonts/Texturina-VariableFont_opsz,wght.ttf" id="4_iv2fv"]
+[ext_resource type="AudioStream" uid="uid://xx84mv6imhay" path="res://assets/musica/asfodelos.ogg" id="5_iv2fv"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -133,3 +134,8 @@ theme_override_fonts/font = ExtResource("4_iv2fv")
 theme_override_font_sizes/font_size = 47
 text = "QUIT"
 flat = true
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_iv2fv")
+autoplay = true
+parameters/looping = false
