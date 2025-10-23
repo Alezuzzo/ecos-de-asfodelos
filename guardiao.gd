@@ -8,7 +8,7 @@ signal morreu
 #-----------------------------------------------------------------------------
 @export_category("Atributos Principais")
 @export var vida_maxima = 100
-@export var velocidade = 120.0 # Velocidade base de movimento
+@export var velocidade = 120.0
 @export var dano_por_toque = 2
 @export var stop_distance = 50.0
 @export var pushback_force = 700.0
@@ -18,8 +18,8 @@ signal morreu
 @export var cooldown_ataque_f1 = 2.5
 @export var tempo_aviso_investida = 0.8
 @export var multiplicador_vel_investida = 5.0
-@export var num_projeteis_salva = 7
-@export var num_projeteis_circulo = 20
+@export var num_projeteis_salva = 12
+@export var num_projeteis_circulo = 28
 
 @export_category("Balanceamento Fase 2")
 @export var cooldown_ataque_f2 = 1.8
@@ -40,6 +40,7 @@ var atordoado = false # Para stun pós-ataque
 enum State {ESPERANDO, ATACANDO, AVANCANDO}
 var estado_atual = State.ESPERANDO
 var projetil_chefe_cena = preload("res://projetil_inimigo.tscn")
+var damage_number_scene = preload("res://DamageNumber.tscn") # <-- REFERÊNCIA ADICIONADA
 var tamanho_da_tela: Vector2
 var metade_do_tamanho_sprite: Vector2
 
@@ -103,7 +104,7 @@ func _physics_process(delta):
 				velocity = Vector2.ZERO
 				if has_node("StunTimer"): $StunTimer.start(stun_duration_pos_ataque)
 				else: print("AVISO em Guardiao: Nó StunTimer não encontrado.")
-				break # Sai do loop após o ataque/stun
+				break
 
 	if metade_do_tamanho_sprite != Vector2.ZERO:
 		global_position.x = clamp(global_position.x, metade_do_tamanho_sprite.x, tamanho_da_tela.x - metade_do_tamanho_sprite.x)
@@ -114,6 +115,15 @@ func _physics_process(delta):
 #-----------------------------------------------------------------------------
 func sofrer_dano(dano):
 	if invulneravel: return
+
+	# --- CÓDIGO DO NÚMERO DE DANO ADICIONADO ---
+	if damage_number_scene:
+		var damage_num = damage_number_scene.instantiate()
+		get_parent().add_child(damage_num)
+		damage_num.global_position = global_position + Vector2(randf_range(-20, 20), -60) # Ajuste o Y (-60)
+		damage_num.set_damage(dano)
+	# --- FIM DA ADIÇÃO ---
+
 	vida_atual -= dano
 	hit_flash()
 	if vida_atual <= vida_maxima / 2 and not em_fase_2:
@@ -145,6 +155,7 @@ func hit_flash():
 #-----------------------------------------------------------------------------
 # Lógica de Combate e Ataques
 #-----------------------------------------------------------------------------
+# ... (Funções escolher_proximo_ataque e todos os ataques permanecem iguais) ...
 func escolher_proximo_ataque():
 	if not is_instance_valid(jogador) or estado_atual != State.ESPERANDO or atordoado:
 		return
@@ -156,22 +167,17 @@ func escolher_proximo_ataque():
 		var ataques_fase2 = [ataque_salva_espiral, ataque_investidas_multiplas, ataque_evocar_lamentos]
 		ataques_fase2.pick_random().call()
 
-# --- ATAQUE EVOCAR LAMENTOS CORRIGIDO ---
 func ataque_evocar_lamentos():
 	estado_atual = State.ATACANDO
-	var arena_node = get_parent().get_parent() # Pega a Arena (avô)
-	
-	# Chama a função de spawn especial para o chefe
+	var arena_node = get_parent().get_parent()
 	if arena_node.has_method("spawnar_inimigo_para_chefe"):
 		arena_node.spawnar_inimigo_para_chefe()
 		arena_node.spawnar_inimigo_para_chefe()
 	else:
 		print("ERRO em Guardiao: Função spawnar_inimigo_para_chefe não encontrada na Arena.")
-		
 	await get_tree().create_timer(1.0).timeout
 	estado_atual = State.ESPERANDO
 	$AtaqueCooldown.start(cooldown_ataque_f2)
-# --- FIM DA CORREÇÃO ---
 
 func ataque_salva_de_ecos():
 	if not is_instance_valid(jogador): return
@@ -213,7 +219,6 @@ func ataque_salva_espiral():
 		var projetil = projetil_chefe_cena.instantiate()
 		projetil.position = position
 		projetil.rotation_degrees = i * 30
-		# Assume-se que projetil_inimigo.gd tem a variável 'velocidade'
 		projetil.velocidade = 200 + (i * 20)
 		get_parent().add_child(projetil)
 		await get_tree().create_timer(0.05).timeout
@@ -252,5 +257,4 @@ func _on_ataque_cooldown_timeout():
 
 func _on_stun_timer_timeout():
 	atordoado = false
-	# Após o stun, reinicia o cooldown normal de ataque
 	$AtaqueCooldown.start(cooldown_ataque_f1 if not em_fase_2 else cooldown_ataque_f2)

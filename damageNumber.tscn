@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://hgsefp30us2f"]
+
+[ext_resource type="Script" uid="uid://cak6kwhmkkglt" path="res://damage_number.gd" id="1_05dae"]
+
+[node name="DamageNumber" type="Node2D"]
+z_index = 10
+script = ExtResource("1_05dae")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_colors/font_color = Color(0.76334053, 0, 0.1302284, 1)
+theme_override_colors/font_outline_color = Color(0.365403, 1.9553117e-07, 1.6845763e-07, 1)
+theme_override_font_sizes/font_size = 20
+text = "-99
+"
+horizontal_alignment = 1
