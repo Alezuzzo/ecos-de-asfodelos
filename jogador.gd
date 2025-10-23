@@ -19,6 +19,7 @@ var saude_atual = 0
 var projetil_cena = preload("res://projetil.tscn")
 var onda_de_choque_cena = preload("res://onda_de_choque.tscn")
 var hud = null
+@onready var shot_sound_player = $ShotSoundPlayer
 
 #-----------------------------------------------------------------------------
 # ESTADO DAS MELHORIAS E CONTROLE
@@ -115,6 +116,7 @@ func clamp_position_to_screen(): # Função para limitar à tela
 #-----------------------------------------------------------------------------
 
 func atirar(direcao_tiro: Vector2):
+	shot_sound_player.play()
 	pode_atirar = false
 	ultima_direcao_tiro = direcao_tiro
 	var projetil = projetil_cena.instantiate()
@@ -136,7 +138,7 @@ func sofrer_dano(quantidade):
 	if invulneravel: return
 	var saude_projetada = saude_atual - quantidade
 	if tem_baluarte_da_alma and not baluarte_usado_na_onda and saude_projetada <= 0:
-		print("BALUARTE DA ALMA ATIVADO!")
+		print("BALUARTE DA ALMA COMPLETO")
 		baluarte_usado_na_onda = true
 		invulneravel = true
 		$InvulnerabilidadeTimer.start()

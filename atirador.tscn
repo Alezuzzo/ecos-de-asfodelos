@@ -1,10 +1,12 @@
-[gd_scene load_steps=8 format=3 uid="uid://dksr7db7ap4lc"]
+[gd_scene load_steps=10 format=3 uid="uid://dksr7db7ap4lc"]
 
 [ext_resource type="Script" uid="uid://bid56nuq6acv8" path="res://atirador.gd" id="1_5chg7"]
 [ext_resource type="Texture2D" uid="uid://dq4lkvwyfdjq2" path="res://assets/shooter/shooter1.png" id="2_6easg"]
 [ext_resource type="Texture2D" uid="uid://c6mghha0xpwp" path="res://assets/shooter/shooter2.png" id="3_pper6"]
 [ext_resource type="Texture2D" uid="uid://dey0dtihxl3oh" path="res://assets/shooter/shooter3.png" id="4_bt672"]
 [ext_resource type="Texture2D" uid="uid://wfwf6n48056j" path="res://assets/shooter/shooter4.png" id="5_4iuke"]
+[ext_resource type="AudioStream" uid="uid://wb511a4mkc2n" path="res://assets/efeitosSonoros/harpie.ogg" id="6_bt672"]
+[ext_resource type="AudioStream" uid="uid://bn4ky6obh2tw3" path="res://assets/efeitosSonoros/dead.ogg" id="7_4iuke"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1su0k"]
 size = Vector2(51, 66)
@@ -43,5 +45,11 @@ scale = Vector2(0.3, 0.3)
 sprite_frames = SubResource("SpriteFrames_rkj23")
 autoplay = "default"
 frame_progress = 0.8851347
+
+[node name="SpawnSoundPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_bt672")
+
+[node name="DeathSoundPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_4iuke")
 
 [connection signal="timeout" from="TiroTimer" to="." method="_on_tiro_timer_timeout"]

@@ -33,7 +33,7 @@ var jogador = null
 var pode_causar_dano = true
 var em_fase_2 = false
 var invulneravel = false # Durante transição
-var atordoado = false # <-- Flag para stun pós-ataque
+var atordoado = false # Para stun pós-ataque
 
 @onready var sprite_animado: AnimatedSprite2D = $SpriteAnimado
 
@@ -94,16 +94,16 @@ func _physics_process(delta):
 			if pode_causar_dano:
 				collider.sofrer_dano(dano_por_toque)
 				pode_causar_dano = false
-				# --- A LINHA DO ERRO ESTÁ AQUI ---
-				# Ela falha se o nó 'DanoCooldown' não existir.
-				$DanoCooldown.start() 
-				# ---------------------------------
+				if has_node("DanoCooldown"): $DanoCooldown.start()
+				else: print("AVISO em Guardiao: Nó DanoCooldown não encontrado.")
+				
 				atordoado = true
 				var push_direction = global_position.direction_to(collider.global_position).rotated(PI)
-				var collision_info = move_and_collide(push_direction * pushback_force * delta)
+				move_and_collide(push_direction * pushback_force * delta)
 				velocity = Vector2.ZERO
-				$StunTimer.start(stun_duration_pos_ataque)
-				break
+				if has_node("StunTimer"): $StunTimer.start(stun_duration_pos_ataque)
+				else: print("AVISO em Guardiao: Nó StunTimer não encontrado.")
+				break # Sai do loop após o ataque/stun
 
 	if metade_do_tamanho_sprite != Vector2.ZERO:
 		global_position.x = clamp(global_position.x, metade_do_tamanho_sprite.x, tamanho_da_tela.x - metade_do_tamanho_sprite.x)
@@ -118,7 +118,7 @@ func sofrer_dano(dano):
 	hit_flash()
 	if vida_atual <= vida_maxima / 2 and not em_fase_2:
 		call_deferred("iniciar_fase_2")
-	if vida_atual <= 0:
+	if vida_atual <= 0 and not is_queued_for_deletion():
 		emit_signal("morreu")
 		queue_free()
 
@@ -156,17 +156,23 @@ func escolher_proximo_ataque():
 		var ataques_fase2 = [ataque_salva_espiral, ataque_investidas_multiplas, ataque_evocar_lamentos]
 		ataques_fase2.pick_random().call()
 
+# --- ATAQUE EVOCAR LAMENTOS CORRIGIDO ---
 func ataque_evocar_lamentos():
 	estado_atual = State.ATACANDO
-	var arena_node = get_parent().get_parent()
-	if arena_node.has_method("spawnar_inimigo"):
-		arena_node.spawnar_inimigo()
-		arena_node.spawnar_inimigo()
+	var arena_node = get_parent().get_parent() # Pega a Arena (avô)
+	
+	# Chama a função de spawn especial para o chefe
+	if arena_node.has_method("spawnar_inimigo_para_chefe"):
+		arena_node.spawnar_inimigo_para_chefe()
+		arena_node.spawnar_inimigo_para_chefe()
+	else:
+		print("ERRO em Guardiao: Função spawnar_inimigo_para_chefe não encontrada na Arena.")
+		
 	await get_tree().create_timer(1.0).timeout
 	estado_atual = State.ESPERANDO
 	$AtaqueCooldown.start(cooldown_ataque_f2)
+# --- FIM DA CORREÇÃO ---
 
-# ... (Resto das funções de ataque permanecem iguais) ...
 func ataque_salva_de_ecos():
 	if not is_instance_valid(jogador): return
 	estado_atual = State.ATACANDO
@@ -207,6 +213,7 @@ func ataque_salva_espiral():
 		var projetil = projetil_chefe_cena.instantiate()
 		projetil.position = position
 		projetil.rotation_degrees = i * 30
+		# Assume-se que projetil_inimigo.gd tem a variável 'velocidade'
 		projetil.velocidade = 200 + (i * 20)
 		get_parent().add_child(projetil)
 		await get_tree().create_timer(0.05).timeout

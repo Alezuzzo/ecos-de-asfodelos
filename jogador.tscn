@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://4vicljavkaft"]
+[gd_scene load_steps=26 format=3 uid="uid://4vicljavkaft"]
 
 [ext_resource type="Script" uid="uid://bajb5dx8non1p" path="res://jogador.gd" id="1_yuxfx"]
 [ext_resource type="Texture2D" uid="uid://bp2rlvs17ehex" path="res://assets/jeremy/idle/jeremy_idle2.png" id="2_4obgb"]
@@ -22,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://cwh3bxftf0if3" path="res://assets/jeremy/walk_up/jeremy_walkup4.png" id="20_hskd6"]
 [ext_resource type="Texture2D" uid="uid://h3pihv7eaor7" path="res://assets/jeremy/walk_up/jeremy_walkup5.png" id="21_1xlih"]
 [ext_resource type="Texture2D" uid="uid://bnoxpijoxwn7b" path="res://assets/jeremy/walk_up/jeremy_walkup6.png" id="22_cax3v"]
+[ext_resource type="AudioStream" uid="uid://dtn75wdem4774" path="res://assets/efeitosSonoros/fireshot.ogg" id="23_f0vkq"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_82vy7"]
 animations = [{
@@ -137,6 +138,10 @@ frame_progress = 0.4691008
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-1, -17)
 shape = SubResource("CapsuleShape2D_sqpra")
+
+[node name="ShotSoundPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("23_f0vkq")
+volume_db = 3.0
 
 [connection signal="timeout" from="TimerCadencia" to="." method="_on_timer_cadencia_timeout"]
 [connection signal="timeout" from="FocoTimer" to="." method="_on_foco_timer_timeout"]

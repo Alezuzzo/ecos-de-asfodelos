@@ -116,8 +116,8 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_jchh4"]
-size = Vector2(94, 144)
+[sub_resource type="CircleShape2D" id="CircleShape2D_wfx17"]
+radius = 45.01111
 
 [node name="Guardiao" type="CharacterBody2D" groups=["inimigos"]]
 script = ExtResource("1_jchh4")
@@ -128,13 +128,12 @@ cooldown_ataque_f1 = 2.0
 [node name="SpriteAnimado" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.3, 0.3)
 sprite_frames = SubResource("SpriteFrames_unner")
-animation = &"fase_2_idle"
+animation = &"transicao"
 autoplay = "fase_1_idle"
-frame_progress = 0.28719896
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(1, 15)
-shape = SubResource("RectangleShape2D_jchh4")
+position = Vector2(0, 27)
+shape = SubResource("CircleShape2D_wfx17")
 
 [node name="DanoCooldown" type="Timer" parent="."]
 wait_time = 1.5

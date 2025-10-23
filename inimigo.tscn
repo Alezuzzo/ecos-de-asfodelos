@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://oc8bhn4tex14"]
+[gd_scene load_steps=11 format=3 uid="uid://oc8bhn4tex14"]
 
 [ext_resource type="Script" uid="uid://srcefciccjp8" path="res://inimigo.gd" id="1_030df"]
 [ext_resource type="Texture2D" uid="uid://c76ujs62ndkcq" path="res://assets/grabman/grabman1.png" id="2_o83ti"]
@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://5rdo7f6wloy3" path="res://assets/grabman/grabman3.png" id="4_ekwcj"]
 [ext_resource type="Texture2D" uid="uid://biujo0xouwqog" path="res://assets/grabman/grabman4.png" id="5_eewpo"]
 [ext_resource type="Texture2D" uid="uid://bs8tb2k8r6nap" path="res://assets/grabman/grabman5.png" id="6_3af6e"]
+[ext_resource type="AudioStream" uid="uid://cuhei4hc3tyjr" path="res://assets/efeitosSonoros/grabman.ogg" id="7_ekwcj"]
+[ext_resource type="AudioStream" uid="uid://bn4ky6obh2tw3" path="res://assets/efeitosSonoros/dead.ogg" id="8_eewpo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1su0k"]
 size = Vector2(60, 78)
@@ -51,6 +53,16 @@ scale = Vector2(0.3, 0.3)
 sprite_frames = SubResource("SpriteFrames_nglqo")
 autoplay = "default"
 frame_progress = 0.84193325
+
+[node name="SpawnSoundPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_ekwcj")
+
+[node name="DeathSoundPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_eewpo")
+
+[node name="PeriodicSoundTimer" type="Timer" parent="."]
+wait_time = 5.0
+autostart = true
 
 [connection signal="timeout" from="DanoCooldown" to="." method="_on_dano_cooldown_timeout"]
 [connection signal="timeout" from="StunTimer" to="." method="_on_stun_timer_timeout"]

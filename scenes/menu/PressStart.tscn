@@ -117,3 +117,4 @@ libraries = {
 stream = ExtResource("4_lr05n")
 volume_db = 4.815
 autoplay = true
+parameters/looping = true
