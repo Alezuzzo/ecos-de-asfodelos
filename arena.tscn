@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://swhhkx7vnfua"]
+[gd_scene load_steps=26 format=3 uid="uid://swhhkx7vnfua"]
 
 [ext_resource type="Script" uid="uid://2sj4gixj5wx5" path="res://arena.gd" id="1_444vf"]
 [ext_resource type="PackedScene" uid="uid://4vicljavkaft" path="res://jogador.tscn" id="2_27ga2"]
@@ -19,6 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://c4eesh3lot3ap" path="res://assets/cartomante/cartomante5.png" id="13_ffcej"]
 [ext_resource type="Texture2D" uid="uid://dcheldmvos7jo" path="res://assets/cartomante/cartomante6.png" id="14_3vubs"]
 [ext_resource type="AudioStream" uid="uid://b5f6ov0ohos70" path="res://assets/musica/entering-the-spiritual-arena.ogg" id="19_3vubs"]
+[ext_resource type="AudioStream" uid="uid://chev76d88gnj3" path="res://assets/musica/GuardianOfSoul.ogg" id="20_6p4q2"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1pekq"]
 texture = ExtResource("7_1s3fb")
@@ -10678,10 +10679,16 @@ frame_progress = 0.14003363
 wait_time = 2.0
 one_shot = true
 
-[node name="MusicaCombate" type="AudioStreamPlayer" parent="."]
+[node name="MusicCombate" type="AudioStreamPlayer" parent="."]
 process_mode = 3
 stream = ExtResource("19_3vubs")
+volume_db = -5.099
 autoplay = true
+parameters/looping = true
+
+[node name="BossMusicPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("20_6p4q2")
+volume_db = 0.6
 parameters/looping = true
 
 [connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]

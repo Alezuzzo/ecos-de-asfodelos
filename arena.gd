@@ -6,6 +6,11 @@ extends Node2D
 @export var cena_chefe: PackedScene
 @export var game_over_screen_cena: PackedScene
 
+# --- REFERÊNCIAS PARA OS PLAYERS DE MÚSICA ---
+@onready var music_combate = $MusicCombate
+@onready var boss_music_player = $BossMusicPlayer
+# ----------------------------------------------
+
 # --- Variáveis de Estado ---
 var jogador_node = null
 var luta_contra_chefe_ativa = false
@@ -31,7 +36,7 @@ func _ready():
 	# Conecta os sinais entre os diferentes componentes do jogo
 	jogador_node.saude_alterada.connect($HUD.atualizar_coracoes)
 	$TelaMelhorias.melhoria_selecionada.connect(_on_melhoria_selecionada)
-	jogador_node.morreu.connect(_on_jogador_morreu) # Conexão para o Game Over
+	jogador_node.morreu.connect(_on_jogador_morreu)
 	
 	# Manda o HUD se desenhar pela primeira vez
 	$HUD.atualizar_coracoes(jogador_node.saude_atual, jogador_node.saude_maxima)
@@ -39,6 +44,13 @@ func _ready():
 	# Inicia os timers do jogo
 	$StartTimer.start()
 	$EventoTimer.start()
+	
+	# --- LÓGICA DE MÚSICA ADICIONADA ---
+	# Garante que a música de combate normal comece
+	music_combate.play()
+	# Garante que a música do chefe não esteja tocando
+	boss_music_player.stop()
+	# ---------------------------------
 
 #-----------------------------------------------------------------------------
 # LÓGICA DAS ONDAS E INIMIGOS
@@ -83,7 +95,7 @@ func spawnar_inimigo():
 	inimigo.jogador = jogador_node
 
 #-----------------------------------------------------------------------------
-# LÓGICA DO CHEFE
+# LÓGICA DO CHEFE (COM MUDANÇA DE MÚSICA)
 #-----------------------------------------------------------------------------
 
 func iniciar_luta_chefe():
@@ -91,11 +103,16 @@ func iniciar_luta_chefe():
 	luta_contra_chefe_ativa = true
 	$EventoTimer.stop()
 	
+	# --- TROCA A MÚSICA ---
+	music_combate.stop()
+	boss_music_player.play()
+	# -----------------------
+	
 	for inimigo in get_tree().get_nodes_in_group("inimigos"):
 		inimigo.queue_free()
 		
 	var chefe = cena_chefe.instantiate()
-	chefe.name = "Guardiao" # Damos um nome para encontrá-lo depois
+	chefe.name = "Guardiao"
 	chefe.position = tamanho_da_tela / 2
 	chefe.jogador = jogador_node
 	$YSortContainer.add_child(chefe)
@@ -141,6 +158,11 @@ func _on_card_activation_timer_timeout():
 
 func _on_chefe_morreu():
 	print("VITÓRIA! O Guardião foi libertado.")
+	
+	# --- PARA A MÚSICA DO CHEFE ---
+	boss_music_player.stop()
+	# ----------------------------
+	
 	get_tree().paused = true
 
 func _on_melhoria_selecionada(id_carta: String):
@@ -174,11 +196,18 @@ func _on_evento_timer_timeout():
 		print("FONTE DE VIDA APARECEU!")
 
 #-----------------------------------------------------------------------------
-# --- NOVAS FUNÇÕES DE GAME OVER ---
+# FUNÇÕES DE GAME OVER (COM CONTROLE DE MÚSICA)
 #-----------------------------------------------------------------------------
 
 func _on_jogador_morreu():
 	get_tree().call_deferred("set_pause", true)
+	
+	# --- PARA A MÚSICA QUE ESTIVER TOCANDO ---
+	if luta_contra_chefe_ativa:
+		boss_music_player.stop()
+	else:
+		music_combate.stop()
+	# ----------------------------------------
 	
 	var progresso_percent = 0.0
 	var max_progresso = float(onda_do_chefe)
@@ -198,13 +227,13 @@ func _on_jogador_morreu():
 	game_over_screen.quit_pressed.connect(_on_quit_pressed)
 	
 	# SUBSTITUA PELOS SEUS ASSETS REAIS
-	var textura_inimigo = load("res://assets/gameover/boss1.png") 
+	var textura_inimigo = load("res://assets/gameover/boss1.png")
 	var citacao = '"Você parecia forte. Pena que sua alma agora é minha."'
 	game_over_screen.setup_screen(progresso_percent, textura_inimigo, citacao)
 
 func _on_retry_pressed():
 	get_tree().paused = false
-	get_tree().reload_current_scene()
+	get_tree().reload_current_scene() # Reinicia a cena, _ready() cuidará da música
 
 func _on_quit_pressed():
 	get_tree().paused = false
