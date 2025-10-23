@@ -137,5 +137,6 @@ flat = true
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_iv2fv")
+volume_db = 2.889
 autoplay = true
 parameters/looping = false

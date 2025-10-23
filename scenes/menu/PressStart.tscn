@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://bx5rv7biakoj8"]
+[gd_scene load_steps=8 format=3 uid="uid://bx5rv7biakoj8"]
 
 [ext_resource type="Script" uid="uid://71bol3mm8ue3" path="res://scenes/menu/PressStart.gd" id="1_ebig0"]
 [ext_resource type="Texture2D" uid="uid://donobwhjefrxp" path="res://assets/menu/bg_asfodelos.png" id="2_a35nf"]
 [ext_resource type="FontFile" uid="uid://cccl75xnkimhx" path="res://assets/fonts/Cinzel-VariableFont_wght.ttf" id="3_lr05n"]
+[ext_resource type="AudioStream" uid="uid://c3me2boq167rx" path="res://assets/musica/pressstartscene.ogg" id="4_lr05n"]
 
 [sub_resource type="Animation" id="Animation_a35nf"]
 length = 0.001
@@ -111,3 +112,8 @@ uppercase = true
 libraries = {
 &"": SubResource("AnimationLibrary_lr05n")
 }
+
+[node name="Musicintro" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_lr05n")
+volume_db = 4.815
+autoplay = true
