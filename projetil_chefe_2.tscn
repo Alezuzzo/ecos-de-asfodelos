@@ -43,7 +43,7 @@ script = ExtResource("1_u0fln")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_0eurp")
 
-[node name="Timer" type="Timer" parent="."]
+[node name="TimerVida" type="Timer" parent="."]
 one_shot = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -53,4 +53,4 @@ autoplay = "default"
 frame_progress = 0.99811673
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="timeout" from="TimerVida" to="." method="_on_timer_vida_timeout"]
