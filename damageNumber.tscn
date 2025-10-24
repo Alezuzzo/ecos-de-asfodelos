@@ -9,8 +9,8 @@ script = ExtResource("1_05dae")
 [node name="Label" type="Label" parent="."]
 offset_right = 40.0
 offset_bottom = 23.0
-theme_override_colors/font_color = Color(0.76334053, 0, 0.1302284, 1)
-theme_override_colors/font_outline_color = Color(0.365403, 1.9553117e-07, 1.6845763e-07, 1)
+theme_override_colors/font_color = Color(0.7373294, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 text = "-99
 "

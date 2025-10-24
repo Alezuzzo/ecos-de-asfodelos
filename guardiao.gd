@@ -16,10 +16,10 @@ signal morreu
 
 @export_category("Balanceamento Fase 1")
 @export var cooldown_ataque_f1 = 2.5
-@export var tempo_aviso_investida = 0.8
+@export var tempo_aviso_investida = 1
 @export var multiplicador_vel_investida = 5.0
-@export var num_projeteis_salva = 12
-@export var num_projeteis_circulo = 28
+@export var num_projeteis_salva = 7
+@export var num_projeteis_circulo = 20
 
 @export_category("Balanceamento Fase 2")
 @export var cooldown_ataque_f2 = 1.8
