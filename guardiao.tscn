@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://bvxbwfcpx1d1u"]
+[gd_scene load_steps=30 format=3 uid="uid://bvxbwfcpx1d1u"]
 
 [ext_resource type="Script" uid="uid://bop1lqtfnbkmh" path="res://guardiao.gd" id="1_jchh4"]
 [ext_resource type="Texture2D" uid="uid://brs4wouj30key" path="res://assets/boss1/boss1.png" id="2_3gjua"]
@@ -25,6 +25,8 @@
 [ext_resource type="Texture2D" uid="uid://bmo86um0i3qby" path="res://assets/boss1/transicao/boss1-segfase10.png" id="23_gkf4m"]
 [ext_resource type="Texture2D" uid="uid://lgyyy3n10bje" path="res://assets/boss1/transicao/boss1-segfase11.png" id="24_ryjoe"]
 [ext_resource type="Texture2D" uid="uid://borank7yo8111" path="res://assets/boss1/transicao/boss1-segfase12.png" id="25_si1gi"]
+[ext_resource type="AudioStream" uid="uid://bum3h4e3c11o2" path="res://assets/efeitosSonoros/scream_guardian.ogg" id="26_b6adu"]
+[ext_resource type="AudioStream" uid="uid://b8ibvek64uli" path="res://assets/efeitosSonoros/snarl_guardian.ogg" id="27_ppkpq"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_unner"]
 animations = [{
@@ -146,6 +148,19 @@ one_shot = true
 [node name="StunTimer" type="Timer" parent="."]
 one_shot = true
 
+[node name="PeriodicSoundTimer" type="Timer" parent="."]
+wait_time = 4.0
+autostart = true
+
+[node name="PeriodicSoundPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("26_b6adu")
+volume_db = 6.741
+
+[node name="TransitionSoundPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("27_ppkpq")
+volume_db = 4.0
+
 [connection signal="timeout" from="DanoCooldown" to="." method="_on_dano_cooldown_timeout"]
 [connection signal="timeout" from="AtaqueCooldown" to="." method="_on_ataque_cooldown_timeout"]
 [connection signal="timeout" from="StunTimer" to="." method="_on_stun_timer_timeout"]
+[connection signal="timeout" from="PeriodicSoundTimer" to="." method="_on_periodic_sound_timer_timeout"]
