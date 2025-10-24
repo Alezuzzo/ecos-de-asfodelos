@@ -7,11 +7,12 @@ extends Node2D
 @export var victory_screen_cena: PackedScene
 
 @export_category("MODO TESTE")
-@export var MODO_TESTE_ATIVADO = false  # MUDE PARA true PARA IR DIRETO AO CHEFE
+@export var MODO_TESTE_ATIVADO = false # MUDE PARA true PARA IR DIRETO AO CHEFE
 
-# --- REFERÊNCIAS PARA OS PLAYERS DE MÚSICA ---
+
 @onready var music_combate = $MusicCombate
 @onready var boss_music_player = $BossMusicPlayer
+# ----------------------------------------------
 
 # --- Variáveis de Estado ---
 var jogador_node = null
@@ -21,48 +22,62 @@ var luta_contra_chefe_ativa = false # Flag principal de controle
 var onda_atual = 0
 var inimigos_vivos = 0
 var base_inimigos_por_onda = 3
-var onda_do_chefe = 5
+var onda_do_chefe = 5 # Define em qual onda o chefe aparece
 
 var tamanho_da_tela: Vector2
 
 func _ready():
-	jogador_node = $YSortContainer/Jogador
+	jogador_node = get_node_or_null("YSortContainer/Jogador")
 	tamanho_da_tela = get_viewport_rect().size
 	
 	# Verifica se o jogador foi encontrado antes de tentar acessá-lo
 	if is_instance_valid(jogador_node):
-		jogador_node.hud = $HUD
-		jogador_node.saude_alterada.connect($HUD.atualizar_coracoes)
-		jogador_node.morreu.connect(_on_jogador_morreu)
-		# Verifica se o HUD existe antes de atualizar
-		if is_instance_valid($HUD):
-			$HUD.atualizar_coracoes(jogador_node.saude_atual, jogador_node.saude_maxima)
+		var hud_node = get_node_or_null("HUD")
+		if is_instance_valid(hud_node):
+			jogador_node.hud = hud_node # Passa a referência do HUD
+			jogador_node.saude_alterada.connect(hud_node.atualizar_coracoes)
+			# Atualiza o HUD inicial apenas se o jogador e o HUD existirem
+			hud_node.atualizar_coracoes(jogador_node.saude_atual, jogador_node.saude_maxima)
+		else:
+			printerr("ERRO CRÍTICO em Arena _ready(): Nó HUD não encontrado.")
+
+		jogador_node.morreu.connect(_on_jogador_morreu) # Conecta sinal de morte
 	else:
 		printerr("ERRO CRÍTICO em Arena _ready(): Nó Jogador não encontrado no caminho esperado ($YSortContainer/Jogador).")
 		get_tree().quit() # Fecha o jogo se não encontrar o jogador
 
 	# Verifica se a TelaMelhorias existe antes de conectar
-	if is_instance_valid($TelaMelhorias):
-		$TelaMelhorias.melhoria_selecionada.connect(_on_melhoria_selecionada)
+	var tela_melhorias_node = get_node_or_null("TelaMelhorias")
+	if is_instance_valid(tela_melhorias_node):
+		tela_melhorias_node.melhoria_selecionada.connect(_on_melhoria_selecionada)
 	else:
 		printerr("ERRO CRÍTICO em Arena _ready(): Nó TelaMelhorias não encontrado.")
 
-
-	# MODO TESTE: Se ativado, pula direto para o chefe
+	# --- MODO TESTE ---
 	if MODO_TESTE_ATIVADO:
 		print("⚠️ MODO TESTE ATIVADO - Iniciando luta contra o chefe!")
-		call_deferred("iniciar_luta_chefe")
+		call_deferred("iniciar_luta_chefe") # Adia para garantir que _ready termine
 	else:
 		# Inicia os timers do jogo normalmente
-		$StartTimer.start()
-		$EventoTimer.start()
+		var start_timer = get_node_or_null("StartTimer")
+		if is_instance_valid(start_timer): start_timer.start()
+		var evento_timer = get_node_or_null("EventoTimer")
+		if is_instance_valid(evento_timer): evento_timer.start()
 
-		# Inicia a música de combate (com verificação)
-		if is_instance_valid(music_combate): music_combate.play()
-		if is_instance_valid(boss_music_player): boss_music_player.stop()
+		# --- LÓGICA DE MÚSICA COM LOOP MANUAL PARA ITCH.IO
+		if is_instance_valid(music_combate):
+			music_combate.play()
+			# Conecta o sinal 'finished' de volta ao 'play' para loop manual (HTML5)
+			if not music_combate.finished.is_connected(music_combate.play):
+				music_combate.finished.connect(music_combate.play)
+		if is_instance_valid(boss_music_player):
+			boss_music_player.stop()
+			# Conecta o sinal 'finished' de volta ao 'play' para loop manual (HTML5)
+			if not boss_music_player.finished.is_connected(boss_music_player.play):
+				boss_music_player.finished.connect(boss_music_player.play)
+
 
 # LÓGICA DAS ONDAS E INIMIGOS
-
 func iniciar_nova_onda():
 	if is_instance_valid(jogador_node):
 		jogador_node.baluarte_usado_na_onda = false
@@ -79,27 +94,32 @@ func iniciar_nova_onda():
 	
 	call_deferred("_spawn_inimigos_em_loop", quantidade_a_spawnar)
 
+# Função auxiliar segura para spawnar inimigos com delay
 func _spawn_inimigos_em_loop(quantidade):
 	for i in range(quantidade):
-		if luta_contra_chefe_ativa: return
+		if luta_contra_chefe_ativa: return # Para se o chefe começar no meio
 		spawnar_inimigo()
 		await get_tree().create_timer(0.3).timeout
 
 func spawnar_inimigo():
+	# Trava de segurança para ondas normais
 	if luta_contra_chefe_ativa: return
-
-	if not is_instance_valid(jogador_node):
-		printerr("ERRO CRÍTICO: Tentativa de spawnar inimigo sem referência válida do jogador.")
-		return
+	if not is_instance_valid(jogador_node): return # Verifica jogador
 
 	var inimigo_escolhido = cenas_inimigos.pick_random()
-	if not inimigo_escolhido: return
+	if not inimigo_escolhido: return # Verifica se há inimigos para escolher
 	
 	var inimigo = inimigo_escolhido.instantiate()
 	inimigo.connect("morreu", _on_inimigo_morreu)
 	
-	$YSortContainer.add_child(inimigo)
-	
+	var ysort_container = get_node_or_null("YSortContainer")
+	if is_instance_valid(ysort_container):
+		ysort_container.add_child(inimigo)
+	else:
+		printerr("ERRO em spawnar_inimigo: YSortContainer não encontrado.")
+		return # Não adiciona o inimigo se o container não existe
+
+	# Define posição aleatória nas bordas
 	var spawn_pos = Vector2()
 	var borda = randi() % 4
 	match borda:
@@ -108,13 +128,11 @@ func spawnar_inimigo():
 		2: spawn_pos = Vector2(50, randf_range(50, tamanho_da_tela.y - 50))
 		3: spawn_pos = Vector2(tamanho_da_tela.x - 50, randf_range(50, tamanho_da_tela.y - 50))
 	inimigo.global_position = spawn_pos
-	inimigo.jogador = jogador_node 
+	inimigo.jogador = jogador_node
 
 # --- FUNÇÃO EXCLUSIVA PARA O CHEFE ---
 func spawnar_inimigo_para_chefe():
-	if not is_instance_valid(jogador_node):
-		printerr("ERRO CRÍTICO: Tentativa de spawnar inimigo PARA CHEFE sem referência válida do jogador.")
-		return
+	if not is_instance_valid(jogador_node): return
 
 	var inimigo_escolhido = cenas_inimigos.pick_random()
 	if not inimigo_escolhido: return
@@ -122,8 +140,13 @@ func spawnar_inimigo_para_chefe():
 	var inimigo = inimigo_escolhido.instantiate()
 	inimigo.connect("morreu", _on_inimigo_morreu)
 	
-	$YSortContainer.add_child(inimigo)
-	
+	var ysort_container = get_node_or_null("YSortContainer")
+	if is_instance_valid(ysort_container):
+		ysort_container.add_child(inimigo)
+	else:
+		printerr("ERRO em spawnar_inimigo_para_chefe: YSortContainer não encontrado.")
+		return
+
 	var spawn_pos = Vector2()
 	var borda = randi() % 4
 	match borda:
@@ -135,29 +158,37 @@ func spawnar_inimigo_para_chefe():
 	inimigo.jogador = jogador_node
 
 # LÓGICA DO CHEFE
-
 func iniciar_luta_chefe():
 	print("--- O GUARDIÃO APARECEU! ---")
-	luta_contra_chefe_ativa = true
-	$EventoTimer.stop()
+	luta_contra_chefe_ativa = true # Define a flag imediatamente
+	var evento_timer = get_node_or_null("EventoTimer")
+	if is_instance_valid(evento_timer): evento_timer.stop()
 	
 	if is_instance_valid(music_combate): music_combate.stop()
 	if is_instance_valid(boss_music_player): boss_music_player.play()
 	
-	# Limpa inimigos normais ANTES de adicionar o chefe
+	# Limpa inimigos normais
 	for inimigo in get_tree().get_nodes_in_group("inimigos"):
-		if is_instance_valid(inimigo):
-			inimigo.queue_free()
+		if is_instance_valid(inimigo): inimigo.queue_free()
 		
-	await get_tree().process_frame
+	await get_tree().process_frame 
+		
+	if not cena_chefe: # Verifica se a cena do chefe foi definida
+		printerr("ERRO CRÍTICO em iniciar_luta_chefe: Cena do Chefe não definida no Inspetor!")
+		return
 		
 	var chefe = cena_chefe.instantiate()
 	chefe.name = "Guardiao"
 	chefe.position = tamanho_da_tela / 2
 	chefe.jogador = jogador_node
-	$YSortContainer.add_child(chefe)
 	
-	chefe.connect("morreu", _on_chefe_morreu)
+	var ysort_container = get_node_or_null("YSortContainer")
+	if is_instance_valid(ysort_container):
+		ysort_container.add_child(chefe)
+		chefe.connect("morreu", _on_chefe_morreu)
+	else:
+		printerr("ERRO CRÍTICO em iniciar_luta_chefe: YSortContainer não encontrado para adicionar o chefe.")
+
 	
 func verificar_sinergias(jogador):
 	if not is_instance_valid(jogador): return
@@ -171,11 +202,12 @@ func verificar_sinergias(jogador):
 	if tem_todas:
 		print("SINERGIA ATIVADA: Baluarte da Alma!")
 		jogador.tem_baluarte_da_alma = true
-		var hud_node = get_node_or_null("HUD") # Busca segura
+		var hud_node = get_node_or_null("HUD")
 		if is_instance_valid(hud_node) and hud_node.has_method("mostrar_notificacao"):
 			hud_node.mostrar_notificacao("Baluarte da alma completo!")
 		
 
+# FUNÇÕES CONECTADAS A SINAIS (Callbacks)
 func _on_inimigo_morreu():
 	if luta_contra_chefe_ativa: return
 	
@@ -200,17 +232,19 @@ func _on_chefe_morreu():
 	if is_instance_valid(boss_music_player): boss_music_player.stop()
 	get_tree().paused = true
 
-	# Verifica se a cena de vitória foi definida
 	if not victory_screen_cena:
 		printerr("ERRO: Cena de Vitória não definida no Inspetor da Arena!")
 		return
 
-	# Instancia e exibe a tela de vitória
 	var victory_screen = victory_screen_cena.instantiate()
 	add_child(victory_screen)
-	victory_screen.play_again_pressed.connect(_on_play_again_pressed)
-	victory_screen.quit_pressed.connect(_on_victory_quit_pressed)
-	victory_screen.mostrar_tela()
+	if victory_screen.has_signal("play_again_pressed"):
+		victory_screen.play_again_pressed.connect(_on_play_again_pressed)
+	if victory_screen.has_signal("quit_pressed"):
+		victory_screen.quit_pressed.connect(_on_victory_quit_pressed)
+	if victory_screen.has_method("mostrar_tela"):
+		victory_screen.mostrar_tela()
+
 
 func _on_melhoria_selecionada(id_carta: String):
 	var cartomante_sprite = get_node_or_null("CartomanteSprite")
@@ -238,6 +272,7 @@ func _on_evento_timer_timeout():
 		add_child(fonte)
 		print("FONTE DE VIDA APARECEU!")
 
+# FUNÇÕES DE GAME OVER / VITÓRIA
 func _on_jogador_morreu():
 	get_tree().call_deferred("set_pause", true)
 	if luta_contra_chefe_ativa:
@@ -247,7 +282,6 @@ func _on_jogador_morreu():
 	
 	var progresso_percent = 0.0
 	var max_progresso = float(onda_do_chefe)
-	
 	if luta_contra_chefe_ativa:
 		var chefe = $YSortContainer.get_node_or_null("Guardiao")
 		if is_instance_valid(chefe):
@@ -255,11 +289,8 @@ func _on_jogador_morreu():
 				if chefe.vida_maxima > 0:
 					var progresso_do_chefe = 1.0 - (float(chefe.vida_atual) / float(chefe.vida_maxima))
 					progresso_percent = ((max_progresso - 1.0) + progresso_do_chefe) / max_progresso * 100.0
-				else:
-					progresso_percent = (max_progresso - 1.0) / max_progresso * 100.0 # Chefe derrotado
-			else:
-				print("AVISO: Nó Guardiao encontrado, mas sem variáveis vida_atual/vida_maxima.")
-				progresso_percent = (max_progresso - 1.0) / max_progresso * 100.0
+				else: progresso_percent = (max_progresso - 1.0) / max_progresso * 100.0
+			else: progresso_percent = (max_progresso - 1.0) / max_progresso * 100.0
 	else:
 		progresso_percent = (float(onda_atual) - 1.0) / max_progresso * 100.0
 		progresso_percent = max(0.0, progresso_percent)
@@ -272,7 +303,7 @@ func _on_jogador_morreu():
 	add_child(game_over_screen)
 	game_over_screen.retry_pressed.connect(_on_retry_pressed)
 	game_over_screen.quit_pressed.connect(_on_quit_pressed)
-	var textura_inimigo = load("res://assets/gameover/boss1.png")
+	var textura_inimigo = load("res://assets/gameover/boss1.png") 
 	var citacao = '"Você parecia forte. Pena que sua alma agora é minha."'
 	game_over_screen.setup_screen(progresso_percent, textura_inimigo, citacao)
 
@@ -282,13 +313,13 @@ func _on_retry_pressed():
 
 func _on_quit_pressed():
 	get_tree().paused = false
-	#caminho para o MainMenu
-	get_tree().change_scene_to_file("res://scenes/menu/MainMenu.tscn")
+	get_tree().change_scene_to_file("res://scenes/menu/MainMenu.tscn") 
 
-# Funções para a tela de vitória
+# --- Funções para a tela de vitória ---
 func _on_play_again_pressed():
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scenes/menu/MainMenu.tscn")
+	# Volta para o menu principal após a vitória
+	get_tree().change_scene_to_file("res://scenes/menu/MainMenu.tscn") 
 
 func _on_victory_quit_pressed():
 	get_tree().quit()
