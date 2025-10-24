@@ -28,7 +28,7 @@ func preparar_e_mostrar():
 	# Configura cada uma das 3 CardUI na tela.
 	for i in range(3):
 		if card_choices[i]:
-			# Garante que o container esteja visível.
+			# Garante que o container esteja visível
 			card_choices[i].show()
 			
 			# Envia os dados da carta sorteada para a UI correspondente.
