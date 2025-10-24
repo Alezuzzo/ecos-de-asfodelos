@@ -1,0 +1,61 @@
+[gd_scene load_steps=11 format=3 uid="uid://b6ex3ekbmepcp"]
+
+[ext_resource type="Script" uid="uid://do5kgxl1hehmd" path="res://projetil_chefe.gd" id="1_hw2nk"]
+[ext_resource type="Texture2D" uid="uid://crxp8yf2tdgky" path="res://assets/projetil/projetil4/projetil4.png" id="1_ko65s"]
+[ext_resource type="Texture2D" uid="uid://dw26w6wh2xvde" path="res://assets/projetil/projetil4/projetil5.png" id="2_hw2nk"]
+[ext_resource type="Texture2D" uid="uid://rh2l1gnpr3j0" path="res://assets/projetil/projetil4/projetil6.png" id="3_54nje"]
+[ext_resource type="Texture2D" uid="uid://myrys0uad40e" path="res://assets/projetil/projetil4/projetil7.png" id="4_oluk2"]
+[ext_resource type="Texture2D" uid="uid://dlqrcqw3j11cs" path="res://assets/projetil/projetil4/projetil8.png" id="5_40d5a"]
+[ext_resource type="Texture2D" uid="uid://b5ux8f8ehkbss" path="res://assets/projetil/projetil4/projetil9.png" id="6_hkmub"]
+[ext_resource type="Texture2D" uid="uid://srb3vu53bm16" path="res://assets/projetil/projetil4/projetil10.png" id="7_xwoun"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7mlgq"]
+radius = 27.018513
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_v7hss"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_ko65s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_hw2nk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_54nje")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_oluk2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_40d5a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_hkmub")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_xwoun")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[node name="projetil_chefe" type="Area2D"]
+script = ExtResource("1_hw2nk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(4, 0)
+shape = SubResource("CircleShape2D_7mlgq")
+
+[node name="TimerVida" type="Timer" parent="."]
+one_shot = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.4, 0.3)
+sprite_frames = SubResource("SpriteFrames_v7hss")
+autoplay = "default"
+frame_progress = 0.57930356
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="TimerVida" to="." method="_on_timer_vida_timeout"]

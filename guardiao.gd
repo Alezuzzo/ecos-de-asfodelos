@@ -39,7 +39,8 @@ var atordoado = false # Para stun pós-ataque
 
 enum State {ESPERANDO, ATACANDO, AVANCANDO}
 var estado_atual = State.ESPERANDO
-var projetil_chefe_cena = preload("res://projetil_inimigo.tscn")
+var projetil_chefe_cena = preload("res://projetil_chefe.tscn")
+var projetil_chefe_fase2_cena = preload("res://projetil_chefe_2.tscn")
 var damage_number_scene = preload("res://DamageNumber.tscn") # <-- REFERÊNCIA ADICIONADA
 var tamanho_da_tela: Vector2
 var metade_do_tamanho_sprite: Vector2
@@ -216,7 +217,7 @@ func ataque_circulo_de_angustia():
 func ataque_salva_espiral():
 	estado_atual = State.ATACANDO
 	for i in range(20):
-		var projetil = projetil_chefe_cena.instantiate()
+		var projetil = projetil_chefe_fase2_cena.instantiate()
 		projetil.position = position
 		projetil.rotation_degrees = i * 30
 		projetil.velocidade = 200 + (i * 20)

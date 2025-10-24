@@ -1,16 +1,16 @@
 [gd_scene load_steps=14 format=3 uid="uid://cskdyksyrjlrr"]
 
 [ext_resource type="Script" uid="uid://u57fugxsojb3" path="res://projetil_inimigo.gd" id="1_gqbvf"]
-[ext_resource type="Texture2D" uid="uid://d3la12okl5sjs" path="res://assets/projetil/projetil2/projectil2.png" id="2_v8rsf"]
-[ext_resource type="Texture2D" uid="uid://babsreifs5nkc" path="res://assets/projetil/projetil2/projectil3.png" id="3_k0gy1"]
-[ext_resource type="Texture2D" uid="uid://ci33kss7xcx6v" path="res://assets/projetil/projetil2/projectil4.png" id="4_podaa"]
-[ext_resource type="Texture2D" uid="uid://cksu6ubficb3f" path="res://assets/projetil/projetil2/projectil5.png" id="5_lidsu"]
-[ext_resource type="Texture2D" uid="uid://bvi2kym5ejdji" path="res://assets/projetil/projetil2/projectil6.png" id="6_ivif7"]
-[ext_resource type="Texture2D" uid="uid://dvs6nbbh6xgjl" path="res://assets/projetil/projetil2/projectil7.png" id="7_yeur1"]
-[ext_resource type="Texture2D" uid="uid://ivxtatuno74e" path="res://assets/projetil/projetil2/projectil8.png" id="8_ovp2x"]
-[ext_resource type="Texture2D" uid="uid://etrosscbheq5" path="res://assets/projetil/projetil2/projectil9.png" id="9_v510l"]
-[ext_resource type="Texture2D" uid="uid://q7esudck5ayo" path="res://assets/projetil/projetil2/projectil10.png" id="10_urd3m"]
-[ext_resource type="Texture2D" uid="uid://8hoxux04p5qn" path="res://assets/projetil/projetil2/projectil11.png" id="11_ofppt"]
+[ext_resource type="Texture2D" uid="uid://bg6lvyi62hwmx" path="res://assets/projetil/projetil3/projectil3.png" id="2_v8rsf"]
+[ext_resource type="Texture2D" uid="uid://dp583me7x0ufl" path="res://assets/projetil/projetil3/projectil4.png" id="3_k0gy1"]
+[ext_resource type="Texture2D" uid="uid://jrbfi7aiowqk" path="res://assets/projetil/projetil3/projectil5.png" id="4_podaa"]
+[ext_resource type="Texture2D" uid="uid://c0uhc7u5mop1n" path="res://assets/projetil/projetil3/projectil6.png" id="5_lidsu"]
+[ext_resource type="Texture2D" uid="uid://cw8j4n8fkn2h6" path="res://assets/projetil/projetil3/projectil7.png" id="6_ivif7"]
+[ext_resource type="Texture2D" uid="uid://c65cqsnvkms6b" path="res://assets/projetil/projetil3/projectil8.png" id="7_yeur1"]
+[ext_resource type="Texture2D" uid="uid://bld2qf1bjuw5k" path="res://assets/projetil/projetil3/projectil9.png" id="8_ovp2x"]
+[ext_resource type="Texture2D" uid="uid://72n3bbfvgdbo" path="res://assets/projetil/projetil3/projectil10.png" id="9_v510l"]
+[ext_resource type="Texture2D" uid="uid://debxqcqnjyrol" path="res://assets/projetil/projetil3/projectil11.png" id="10_urd3m"]
+[ext_resource type="Texture2D" uid="uid://c6bagofi5crcl" path="res://assets/projetil/projetil3/projectil12.png" id="11_ofppt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xvcbn"]
 size = Vector2(42, 12)
@@ -67,7 +67,7 @@ rotation = 0.7853982
 scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_k0i8x")
 autoplay = "default"
-frame_progress = 0.018888582
+frame_progress = 0.43519005
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="TimerVida" to="." method="_on_timer_vida_timeout"]

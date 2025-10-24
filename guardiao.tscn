@@ -121,7 +121,7 @@ radius = 45.01111
 
 [node name="Guardiao" type="CharacterBody2D" groups=["inimigos"]]
 script = ExtResource("1_jchh4")
-vida_maxima = 200
+vida_maxima = 175
 velocidade = 200.0
 cooldown_ataque_f1 = 2.0
 

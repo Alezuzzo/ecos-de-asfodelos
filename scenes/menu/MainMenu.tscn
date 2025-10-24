@@ -87,7 +87,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.9137255, 0.88235295, 0.76862746, 1)
 theme_override_fonts/font = ExtResource("4_iv2fv")
 theme_override_font_sizes/font_size = 47
-text = "START"
+text = "INICIAR"
 flat = true
 
 [node name="ItemOptions" type="HBoxContainer" parent="Root/VBox"]
@@ -110,7 +110,7 @@ theme_override_colors/font_color = Color(0.9137255, 0.88235295, 0.76862746, 1)
 theme_override_constants/align_to_largest_stylebox = 0
 theme_override_fonts/font = ExtResource("4_iv2fv")
 theme_override_font_sizes/font_size = 47
-text = "OPTIONS"
+text = "OPÇÕES"
 flat = true
 
 [node name="ItemQuit" type="HBoxContainer" parent="Root/VBox"]
@@ -132,7 +132,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.9137255, 0.88235295, 0.76862746, 1)
 theme_override_fonts/font = ExtResource("4_iv2fv")
 theme_override_font_sizes/font_size = 47
-text = "QUIT"
+text = "SAIR"
 flat = true
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
