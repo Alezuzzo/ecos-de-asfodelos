@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://swhhkx7vnfua"]
+[gd_scene load_steps=27 format=3 uid="uid://swhhkx7vnfua"]
 
 [ext_resource type="Script" uid="uid://2sj4gixj5wx5" path="res://arena.gd" id="1_444vf"]
 [ext_resource type="PackedScene" uid="uid://4vicljavkaft" path="res://jogador.tscn" id="2_27ga2"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://h56oto8nao0" path="res://game_over_screen.tscn" id="6_ffcej"]
 [ext_resource type="Texture2D" uid="uid://b0e7ugcy320sb" path="res://assets/background/tileset.png" id="7_1pekq"]
 [ext_resource type="Texture2D" uid="uid://lslia1y4dn12" path="res://assets/background/tileset1.png" id="7_1s3fb"]
+[ext_resource type="PackedScene" uid="uid://c8qr5vj4u8kmn" path="res://victory_screen.tscn" id="7_1vpcs"]
 [ext_resource type="PackedScene" uid="uid://y3f0yvohs0o5" path="res://hud.tscn" id="7_pbtuc"]
 [ext_resource type="PackedScene" uid="uid://vxm8omh4cl65" path="res://lapid.tscn" id="9_1pekq"]
 [ext_resource type="Texture2D" uid="uid://dj0d0s25tigyk" path="res://assets/cartomante/cartomante1.png" id="9_u834y"]
@@ -10616,6 +10617,7 @@ cenas_inimigos = Array[PackedScene]([ExtResource("2_h0wof"), ExtResource("3_sbb5
 cena_fonte_vida = ExtResource("4_pbtuc")
 cena_chefe = ExtResource("5_yokb4")
 game_over_screen_cena = ExtResource("6_ffcej")
+victory_screen_cena = ExtResource("7_1vpcs")
 
 [node name="TileMap2" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_ffcej")

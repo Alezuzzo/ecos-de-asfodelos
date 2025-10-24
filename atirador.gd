@@ -15,7 +15,7 @@ var atordoado = false
 
 var projetil_inimigo_cena = preload("res://projetil_inimigo.tscn")
 # --- REFERÊNCIA PARA A CENA DO NÚMERO DE DANO ---
-var damage_number_scene = preload("res://DamageNumber.tscn")
+var damage_number_scene = preload("res://damageNumber.tscn")
 
 # --- REFERÊNCIAS PARA OS PLAYERS DE SOM ---
 @onready var spawn_sound_player = $SpawnSoundPlayer

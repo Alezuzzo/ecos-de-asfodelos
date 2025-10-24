@@ -5,11 +5,14 @@ signal morreu
 # PAINEL DE CONTROLE DO CHEFE
 @export_category("Atributos Principais")
 @export var vida_maxima = 100
-@export var velocidade = 120.0 
+@export var velocidade = 120.0
 @export var dano_por_toque = 2
 @export var stop_distance = 50.0
 @export var pushback_force = 700.0
 @export var stun_duration_pos_ataque = 0.6
+
+@export_category("MODO TESTE")
+@export var MODO_TESTE_ATIVADO = false  # MUDE PARA true PARA TESTAR
 
 @export_category("Balanceamento Fase 1")
 @export var cooldown_ataque_f1 = 2.5
@@ -40,14 +43,19 @@ enum State {ESPERANDO, ATACANDO, AVANCANDO}
 var estado_atual = State.ESPERANDO
 var projetil_chefe_cena = preload("res://projetil_chefe.tscn")
 var projetil_chefe_fase2_cena = preload("res://projetil_chefe_2.tscn")
-var damage_number_scene = preload("res://DamageNumber.tscn")
+var damage_number_scene = preload("res://damageNumber.tscn")
 var tamanho_da_tela: Vector2
 var metade_do_tamanho_sprite: Vector2
 
 # Funções do Godot
 
 func _ready():
-	vida_atual = vida_maxima
+	# MODO TESTE: Se ativado, começa com 1 de vida
+	if MODO_TESTE_ATIVADO:
+		vida_atual = 1
+		print("⚠️ MODO TESTE ATIVADO - Guardião com 1 de vida!")
+	else:
+		vida_atual = vida_maxima
 	if has_node("AtaqueCooldown"): $AtaqueCooldown.start(cooldown_ataque_f1)
 	else: printerr("ERRO em Guardiao: Nó AtaqueCooldown não encontrado.")
 	

@@ -4,6 +4,10 @@ extends Node2D
 @export var cena_fonte_vida: PackedScene
 @export var cena_chefe: PackedScene
 @export var game_over_screen_cena: PackedScene
+@export var victory_screen_cena: PackedScene
+
+@export_category("MODO TESTE")
+@export var MODO_TESTE_ATIVADO = false  # MUDE PARA true PARA IR DIRETO AO CHEFE
 
 # --- REFERÊNCIAS PARA OS PLAYERS DE MÚSICA ---
 @onready var music_combate = $MusicCombate
@@ -44,13 +48,18 @@ func _ready():
 		printerr("ERRO CRÍTICO em Arena _ready(): Nó TelaMelhorias não encontrado.")
 
 
-	# Inicia os timers do jogo
-	$StartTimer.start()
-	$EventoTimer.start()
-	
-	# Inicia a música de combate (com verificação)
-	if is_instance_valid(music_combate): music_combate.play()
-	if is_instance_valid(boss_music_player): boss_music_player.stop()
+	# MODO TESTE: Se ativado, pula direto para o chefe
+	if MODO_TESTE_ATIVADO:
+		print("⚠️ MODO TESTE ATIVADO - Iniciando luta contra o chefe!")
+		call_deferred("iniciar_luta_chefe")
+	else:
+		# Inicia os timers do jogo normalmente
+		$StartTimer.start()
+		$EventoTimer.start()
+
+		# Inicia a música de combate (com verificação)
+		if is_instance_valid(music_combate): music_combate.play()
+		if is_instance_valid(boss_music_player): boss_music_player.stop()
 
 # LÓGICA DAS ONDAS E INIMIGOS
 
@@ -191,6 +200,18 @@ func _on_chefe_morreu():
 	if is_instance_valid(boss_music_player): boss_music_player.stop()
 	get_tree().paused = true
 
+	# Verifica se a cena de vitória foi definida
+	if not victory_screen_cena:
+		printerr("ERRO: Cena de Vitória não definida no Inspetor da Arena!")
+		return
+
+	# Instancia e exibe a tela de vitória
+	var victory_screen = victory_screen_cena.instantiate()
+	add_child(victory_screen)
+	victory_screen.play_again_pressed.connect(_on_play_again_pressed)
+	victory_screen.quit_pressed.connect(_on_victory_quit_pressed)
+	victory_screen.mostrar_tela()
+
 func _on_melhoria_selecionada(id_carta: String):
 	var cartomante_sprite = get_node_or_null("CartomanteSprite")
 	if is_instance_valid(cartomante_sprite): cartomante_sprite.hide()
@@ -263,3 +284,11 @@ func _on_quit_pressed():
 	get_tree().paused = false
 	#caminho para o MainMenu
 	get_tree().change_scene_to_file("res://scenes/menu/MainMenu.tscn")
+
+# Funções para a tela de vitória
+func _on_play_again_pressed():
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/menu/MainMenu.tscn")
+
+func _on_victory_quit_pressed():
+	get_tree().quit()
