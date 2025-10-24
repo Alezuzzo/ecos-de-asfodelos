@@ -1,4 +1,3 @@
-# fonte_de_vida.gd
 extends Area2D
 
 @export var tempo_de_vida = 8.0 # Segundos que a fonte fica ativa
@@ -8,9 +7,8 @@ func _ready():
 	$VidaTimer.start(tempo_de_vida)
 
 func _on_body_entered(body):
-	# Se o jogador entrar na fonte
 	if body.is_in_group("jogador"):
-		# Chama uma função "curar" no jogador (vamos criá-la)
+		# Chama a função "curar" no jogador
 		body.curar(quantidade_cura)
 		print("JOGADOR CUROU!")
 		queue_free() # Destrói a fonte após o uso

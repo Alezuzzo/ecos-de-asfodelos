@@ -1,8 +1,6 @@
-# CardDB.gd
 extends Node
 
 # A chance de uma carta corrompida aparecer (0.25 = 25%)
-# Você pode ajustar este valor para balancear o jogo!
 const CHANCE_CARTA_CORROMPIDA = 0.25
 
 # Baralho de cartas normais
@@ -39,13 +37,12 @@ const CORRUPTED_CARDS = {
 	},
 }
 
-# --- FUNÇÃO DE SORTEIO RESTAURADA PARA A VERSÃO FINAL E ALEATÓRIA ---
+# --- FUNÇÃO DE SORTEIO ALEATÓRIA ---
 func sortear_cartas(quantidade = 3):
 	var sorteadas = []
 	
 	# Decide se uma carta corrompida vai aparecer
 	if randf() < CHANCE_CARTA_CORROMPIDA and CORRUPTED_CARDS.size() > 0:
-		# Sim! Sorteia 1 carta corrompida e 2 normais.
 		print("DEBUG: Uma carta corrompida foi sorteada!")
 		
 		var chaves_corrompidas = CORRUPTED_CARDS.keys()
@@ -60,7 +57,6 @@ func sortear_cartas(quantidade = 3):
 		# Embaralha o resultado final para que a corrompida não seja sempre a primeira
 		sorteadas.shuffle()
 	else:
-		# Não, serão 3 cartas normais.
 		print("DEBUG: Nenhuma carta corrompida foi sorteada.")
 		
 		var chaves = CARDS.keys()
@@ -70,7 +66,7 @@ func sortear_cartas(quantidade = 3):
 			
 	return sorteadas
 
-# Função auxiliar (permanece igual)
+# Função auxiliar
 func get_card_info(id_carta):
 	if CARDS.has(id_carta):
 		return CARDS[id_carta]

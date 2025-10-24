@@ -1,29 +1,22 @@
-# jogador.gd
 extends CharacterBody2D
 
 signal saude_alterada(saude_atual, saude_maxima)
-signal morreu # Sinal para avisar a Arena quando o jogador morre
+signal morreu 
 
-#-----------------------------------------------------------------------------
 # ATRIBUTOS DO JOGADOR
-#-----------------------------------------------------------------------------
 @export var velocidade = 300
 @export var cadencia_tiro = 0.25
 @export var dano_projetil = 1
 @export var saude_maxima = 6
 var saude_atual = 0
 
-#-----------------------------------------------------------------------------
 # REFERÊNCIAS DE CENAS E NÓS
-#-----------------------------------------------------------------------------
 var projetil_cena = preload("res://projetil.tscn")
 var onda_de_choque_cena = preload("res://onda_de_choque.tscn")
 var hud = null
 @onready var shot_sound_player = $ShotSoundPlayer
 
-#-----------------------------------------------------------------------------
 # ESTADO DAS MELHORIAS E CONTROLE
-#-----------------------------------------------------------------------------
 var pode_atirar = true
 var cartas_coletadas = []
 var tem_guardiao_caido = false
@@ -36,10 +29,6 @@ var ultima_direcao_tiro = Vector2.RIGHT
 var pode_curar = true
 var projeteis_teleguiados = false
 var esta_atirando_agora = false
-
-#-----------------------------------------------------------------------------
-# FUNÇÕES DO GODOT
-#-----------------------------------------------------------------------------
 
 func _ready():
 	saude_atual = saude_maxima
@@ -61,10 +50,8 @@ func _physics_process(delta):
 	handle_animacao()
 	clamp_position_to_screen() # Chama a função de limitação de tela
 
-#-----------------------------------------------------------------------------
-# FUNÇÕES DE CONTROLE (ESTILO ISAAC HÍBRIDO)
-#-----------------------------------------------------------------------------
 
+# FUNÇÕES DE CONTROLE
 func handle_movimento():
 	var direcao = Input.get_vector("esquerda", "direita", "cima", "baixo")
 	velocity = direcao * velocidade
@@ -97,7 +84,6 @@ func handle_animacao():
 
 func clamp_position_to_screen(): # Função para limitar à tela
 	var tamanho_da_tela = get_viewport_rect().size
-	# Verifica se o CollisionShape2D e seu shape existem antes de acessá-los
 	var collision_shape_node = $CollisionShape2D
 	if is_instance_valid(collision_shape_node) and is_instance_valid(collision_shape_node.shape):
 		var shape = collision_shape_node.shape
@@ -106,15 +92,11 @@ func clamp_position_to_screen(): # Função para limitar à tela
 		global_position.x = clamp(global_position.x, metade_largura, tamanho_da_tela.x - metade_largura)
 		global_position.y = clamp(global_position.y, metade_altura, tamanho_da_tela.y - metade_altura)
 	else:
-		# Fallback seguro se a colisão não estiver pronta (raro, mas evita crash)
+		# Fallback seguro se a colisão não estiver pronta
 		global_position.x = clamp(global_position.x, 0, tamanho_da_tela.x)
 		global_position.y = clamp(global_position.y, 0, tamanho_da_tela.y)
 
-
-#-----------------------------------------------------------------------------
 # FUNÇÕES DE AÇÃO E EFEITOS
-#-----------------------------------------------------------------------------
-
 func atirar(direcao_tiro: Vector2):
 	shot_sound_player.play()
 	pode_atirar = false
@@ -148,7 +130,7 @@ func sofrer_dano(quantidade):
 	saude_atual = saude_projetada
 	emit_signal("saude_alterada", saude_atual, saude_maxima)
 	if tem_guardiao_caido:
-		ativar_onda_de_choque() # Chama a função que agora usa call_deferred
+		ativar_onda_de_choque()
 	if tem_foco_penitente:
 		foco_penitente_ativo = false
 		$FocoTimer.start()
@@ -164,10 +146,8 @@ func piscar():
 	tween.tween_property(self, "modulate:a", 0.3, 0.25)
 	tween.tween_property(self, "modulate:a", 1.0, 0.25)
 
-#-----------------------------------------------------------------------------
-# FUNÇÕES CHAMADAS PELAS CARTAS
-#-----------------------------------------------------------------------------
 
+# FUNÇÕES CHAMADAS PELAS CARTAS
 func aumentar_vida_maxima(quantidade):
 	saude_maxima += quantidade
 	curar(quantidade)
@@ -179,21 +159,16 @@ func curar(quantidade):
 	saude_atual = min(saude_atual + quantidade, saude_maxima)
 	emit_signal("saude_alterada", saude_atual, saude_maxima)
 
-# --- FUNÇÃO ATIVAR ONDA DE CHOQUE CORRIGIDA ---
 func ativar_onda_de_choque():
-	# Adia a criação da onda para um momento seguro (idle time)
 	call_deferred("_spawn_onda_de_choque")
 
-# Nova função auxiliar que faz o trabalho real de criar a onda
 func _spawn_onda_de_choque():
 	if not onda_de_choque_cena:
 		print("ERRO em Jogador: Cena da Onda de Choque não está carregada.")
 		return
 	var onda = onda_de_choque_cena.instantiate()
 	onda.global_position = global_position
-	# Adiciona a onda como irmã do jogador (geralmente no YSortContainer)
 	get_parent().add_child(onda)
-# --- FIM DA CORREÇÃO ---
 
 func ativar_foco_penitente():
 	tem_foco_penitente = true
@@ -207,10 +182,7 @@ func ativar_coroa_do_martir():
 	projeteis_teleguiados = true
 	pode_curar = false
 
-#-----------------------------------------------------------------------------
 # FUNÇÕES DE SINAIS (Callbacks)
-#-----------------------------------------------------------------------------
-
 func _on_timer_cadencia_timeout():
 	pode_atirar = true
 
@@ -222,4 +194,4 @@ func _on_foco_timer_timeout():
 
 func _on_invulnerabilidade_timer_timeout():
 	invulneravel = false
-	modulate.a = 1.0 # Garante que volta à opacidade total
+	modulate.a = 1.0 

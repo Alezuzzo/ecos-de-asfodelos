@@ -1,4 +1,3 @@
-# arena.gd
 extends Node2D
 
 @export var cenas_inimigos: Array[PackedScene]
@@ -7,10 +6,8 @@ extends Node2D
 @export var game_over_screen_cena: PackedScene
 
 # --- REFERÊNCIAS PARA OS PLAYERS DE MÚSICA ---
-# Garanta que os nós 'MusicCombate' e 'BossMusicPlayer' existam na cena
 @onready var music_combate = $MusicCombate
 @onready var boss_music_player = $BossMusicPlayer
-# ----------------------------------------------
 
 # --- Variáveis de Estado ---
 var jogador_node = null
@@ -23,10 +20,6 @@ var base_inimigos_por_onda = 3
 var onda_do_chefe = 5
 
 var tamanho_da_tela: Vector2
-
-#-----------------------------------------------------------------------------
-# FUNÇÕES NATIVAS DO GODOT
-#-----------------------------------------------------------------------------
 
 func _ready():
 	jogador_node = $YSortContainer/Jogador
@@ -59,9 +52,7 @@ func _ready():
 	if is_instance_valid(music_combate): music_combate.play()
 	if is_instance_valid(boss_music_player): boss_music_player.stop()
 
-#-----------------------------------------------------------------------------
 # LÓGICA DAS ONDAS E INIMIGOS
-#-----------------------------------------------------------------------------
 
 func iniciar_nova_onda():
 	if is_instance_valid(jogador_node):
@@ -86,7 +77,6 @@ func _spawn_inimigos_em_loop(quantidade):
 		await get_tree().create_timer(0.3).timeout
 
 func spawnar_inimigo():
-	# Trava de segurança para ondas normais
 	if luta_contra_chefe_ativa: return
 
 	if not is_instance_valid(jogador_node):
@@ -109,7 +99,7 @@ func spawnar_inimigo():
 		2: spawn_pos = Vector2(50, randf_range(50, tamanho_da_tela.y - 50))
 		3: spawn_pos = Vector2(tamanho_da_tela.x - 50, randf_range(50, tamanho_da_tela.y - 50))
 	inimigo.global_position = spawn_pos
-	inimigo.jogador = jogador_node # Passa a referência
+	inimigo.jogador = jogador_node 
 
 # --- FUNÇÃO EXCLUSIVA PARA O CHEFE ---
 func spawnar_inimigo_para_chefe():
@@ -134,11 +124,8 @@ func spawnar_inimigo_para_chefe():
 		3: spawn_pos = Vector2(tamanho_da_tela.x - 50, randf_range(50, tamanho_da_tela.y - 50))
 	inimigo.global_position = spawn_pos
 	inimigo.jogador = jogador_node
-# --- FIM DA FUNÇÃO ---
 
-#-----------------------------------------------------------------------------
 # LÓGICA DO CHEFE
-#-----------------------------------------------------------------------------
 
 func iniciar_luta_chefe():
 	print("--- O GUARDIÃO APARECEU! ---")
@@ -150,10 +137,10 @@ func iniciar_luta_chefe():
 	
 	# Limpa inimigos normais ANTES de adicionar o chefe
 	for inimigo in get_tree().get_nodes_in_group("inimigos"):
-		if is_instance_valid(inimigo): # Segurança extra
+		if is_instance_valid(inimigo):
 			inimigo.queue_free()
 		
-	await get_tree().process_frame # Espera a limpeza
+	await get_tree().process_frame
 		
 	var chefe = cena_chefe.instantiate()
 	chefe.name = "Guardiao"
@@ -179,9 +166,6 @@ func verificar_sinergias(jogador):
 		if is_instance_valid(hud_node) and hud_node.has_method("mostrar_notificacao"):
 			hud_node.mostrar_notificacao("Baluarte da alma completo!")
 		
-#-----------------------------------------------------------------------------
-# FUNÇÕES CONECTADAS A SINAIS (Callbacks)
-#-----------------------------------------------------------------------------
 
 func _on_inimigo_morreu():
 	if luta_contra_chefe_ativa: return
@@ -233,9 +217,6 @@ func _on_evento_timer_timeout():
 		add_child(fonte)
 		print("FONTE DE VIDA APARECEU!")
 
-#-----------------------------------------------------------------------------
-# FUNÇÕES DE GAME OVER
-#-----------------------------------------------------------------------------
 func _on_jogador_morreu():
 	get_tree().call_deferred("set_pause", true)
 	if luta_contra_chefe_ativa:
@@ -249,15 +230,12 @@ func _on_jogador_morreu():
 	if luta_contra_chefe_ativa:
 		var chefe = $YSortContainer.get_node_or_null("Guardiao")
 		if is_instance_valid(chefe):
-			# --- CORREÇÃO AQUI: Usa 'in' em vez de 'has' ---
 			if "vida_atual" in chefe and "vida_maxima" in chefe:
-				# Evita divisão por zero se a vida máxima for zero (improvável, mas seguro)
 				if chefe.vida_maxima > 0:
 					var progresso_do_chefe = 1.0 - (float(chefe.vida_atual) / float(chefe.vida_maxima))
 					progresso_percent = ((max_progresso - 1.0) + progresso_do_chefe) / max_progresso * 100.0
 				else:
 					progresso_percent = (max_progresso - 1.0) / max_progresso * 100.0 # Chefe derrotado
-			# --- FIM DA CORREÇÃO ---
 			else:
 				print("AVISO: Nó Guardiao encontrado, mas sem variáveis vida_atual/vida_maxima.")
 				progresso_percent = (max_progresso - 1.0) / max_progresso * 100.0
@@ -273,7 +251,7 @@ func _on_jogador_morreu():
 	add_child(game_over_screen)
 	game_over_screen.retry_pressed.connect(_on_retry_pressed)
 	game_over_screen.quit_pressed.connect(_on_quit_pressed)
-	var textura_inimigo = load("res://assets/gameover/boss1.png") # Verifique o caminho
+	var textura_inimigo = load("res://assets/gameover/boss1.png")
 	var citacao = '"Você parecia forte. Pena que sua alma agora é minha."'
 	game_over_screen.setup_screen(progresso_percent, textura_inimigo, citacao)
 
@@ -283,5 +261,5 @@ func _on_retry_pressed():
 
 func _on_quit_pressed():
 	get_tree().paused = false
-	# Verifique se o caminho para o MainMenu está correto
+	#caminho para o MainMenu
 	get_tree().change_scene_to_file("res://scenes/menu/MainMenu.tscn")

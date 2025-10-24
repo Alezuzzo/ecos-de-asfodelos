@@ -1,14 +1,11 @@
-# guardiao.gd
 extends CharacterBody2D
 
 signal morreu
 
-#-----------------------------------------------------------------------------
 # PAINEL DE CONTROLE DO CHEFE
-#-----------------------------------------------------------------------------
 @export_category("Atributos Principais")
 @export var vida_maxima = 100
-@export var velocidade = 120.0 # Velocidade base de movimento
+@export var velocidade = 120.0 
 @export var dano_por_toque = 2
 @export var stop_distance = 50.0
 @export var pushback_force = 700.0
@@ -25,9 +22,8 @@ signal morreu
 @export var cooldown_ataque_f2 = 1.8
 @export var multiplicador_vel_f2 = 1.5
 
-#-----------------------------------------------------------------------------
+
 # Variáveis de Controle
-#-----------------------------------------------------------------------------
 var vida_atual
 var jogador = null
 var pode_causar_dano = true
@@ -37,9 +33,8 @@ var atordoado = false # Para stun pós-ataque
 
 @onready var sprite_animado: AnimatedSprite2D = $SpriteAnimado
 @onready var periodic_sound_player = $PeriodicSoundPlayer
-# --- REFERÊNCIA PARA O SOM DE TRANSIÇÃO ADICIONADA ---
 @onready var transition_sound_player = $TransitionSoundPlayer
-# --------------------------------------------------
+
 
 enum State {ESPERANDO, ATACANDO, AVANCANDO}
 var estado_atual = State.ESPERANDO
@@ -49,9 +44,8 @@ var damage_number_scene = preload("res://DamageNumber.tscn")
 var tamanho_da_tela: Vector2
 var metade_do_tamanho_sprite: Vector2
 
-#-----------------------------------------------------------------------------
 # Funções do Godot
-#-----------------------------------------------------------------------------
+
 func _ready():
 	vida_atual = vida_maxima
 	if has_node("AtaqueCooldown"): $AtaqueCooldown.start(cooldown_ataque_f1)
@@ -67,10 +61,10 @@ func _ready():
 	else:
 		metade_do_tamanho_sprite = Vector2.ZERO
 		print("AVISO em Guardiao: CollisionShape2D não encontrado ou sem shape.")
-	# O PeriodicSoundTimer (se existir e configurado) começa sozinho com Autostart
+	# O PeriodicSoundTimer começa sozinho com Autostart
 
 func _physics_process(delta):
-	# Verificações iniciais (stun, invulnerabilidade, jogador válido)
+	# Verificações (stun, invulnerabilidade, jogador válido)
 	if atordoado or invulneravel or not is_instance_valid(jogador):
 		velocity = Vector2.ZERO
 		move_and_slide()
@@ -121,9 +115,7 @@ func _physics_process(delta):
 		global_position.x = clamp(global_position.x, metade_do_tamanho_sprite.x, tamanho_da_tela.x - metade_do_tamanho_sprite.x)
 		global_position.y = clamp(global_position.y, metade_do_tamanho_sprite.y, tamanho_da_tela.y - metade_do_tamanho_sprite.y)
 
-#-----------------------------------------------------------------------------
 # Lógica de Vida e Fases
-#-----------------------------------------------------------------------------
 func sofrer_dano(dano):
 	if invulneravel: return
 	if damage_number_scene:
@@ -159,7 +151,6 @@ func iniciar_fase_2():
 		transition_sound_player.play()
 	else:
 		print("AVISO em Guardiao: Nó TransitionSoundPlayer não encontrado.")
-	# -----------------------------
 	
 	sprite_animado.play("transicao") # Toca a animação visual
 	await sprite_animado.animation_finished # Espera a animação visual terminar
@@ -172,17 +163,14 @@ func iniciar_fase_2():
 	# Reinicia o cooldown de ataque e o som periódico
 	if has_node("AtaqueCooldown"): $AtaqueCooldown.start(cooldown_ataque_f2)
 	if is_instance_valid(periodic_timer): periodic_timer.start()
-# --- FIM DA ATUALIZAÇÃO ---
 
 func hit_flash():
 	var tween = create_tween()
 	tween.tween_property(sprite_animado, "modulate", Color.WHITE, 0.1)
 	tween.tween_property(sprite_animado, "modulate", Color(1,1,1,1), 0.1)
 
-#-----------------------------------------------------------------------------
+
 # Lógica de Combate e Ataques
-#-----------------------------------------------------------------------------
-# ... (Funções escolher_proximo_ataque e todos os ataques permanecem iguais) ...
 func escolher_proximo_ataque():
 	if not is_instance_valid(jogador) or estado_atual != State.ESPERANDO or atordoado:
 		return
@@ -272,9 +260,8 @@ func ataque_investida_sombria_coroutine():
 	velocity = global_position.direction_to(alvo) * velocidade * multiplicador_vel_investida
 	await get_tree().create_timer(0.5).timeout
 	velocity = Vector2.ZERO
-#-----------------------------------------------------------------------------
+
 # FUNÇÕES DE SINAIS (Callbacks)
-#-----------------------------------------------------------------------------
 func _on_dano_cooldown_timeout():
 	pode_causar_dano = true
 

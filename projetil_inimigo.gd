@@ -1,4 +1,3 @@
-# projetil_inimigo.gd
 extends Area2D
 
 @export var velocidade = 400
@@ -10,12 +9,9 @@ func _ready():
 func _process(delta):
 	position += transform.x * velocidade * delta
 
-# Esta é a parte importante: a colisão com o jogador
 func _on_body_entered(body):
 	if body.is_in_group("jogador"):
-		# ANTES: body.queue_free()
-		# AGORA:
-		body.sofrer_dano(1) # Causa 1 de dano (meio coração)
+		body.sofrer_dano(1) # Causa 1 de dano, meio coração
 		queue_free() # Destrói o projétil
 
 func _on_timer_vida_timeout():

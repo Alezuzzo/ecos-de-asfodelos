@@ -1,4 +1,3 @@
-# atirador.gd
 extends CharacterBody2D
 
 signal morreu
@@ -16,21 +15,17 @@ var atordoado = false
 
 var projetil_inimigo_cena = preload("res://projetil_inimigo.tscn")
 # --- REFERÊNCIA PARA A CENA DO NÚMERO DE DANO ---
-var damage_number_scene = preload("res://DamageNumber.tscn") # Verifique o caminho!
+var damage_number_scene = preload("res://DamageNumber.tscn")
 
 # --- REFERÊNCIAS PARA OS PLAYERS DE SOM ---
 @onready var spawn_sound_player = $SpawnSoundPlayer
 @onready var death_sound_player = $DeathSoundPlayer
 
-#-----------------------------------------------------------------------------
 # FUNÇÃO _ready() - Toca o som de spawn
-#-----------------------------------------------------------------------------
 func _ready():
 	if spawn_sound_player: spawn_sound_player.play()
 
-#-----------------------------------------------------------------------------
 # FUNÇÕES DE LÓGICA
-#-----------------------------------------------------------------------------
 
 func aplicar_repulsao(direcao, forca):
 	if atordoado: return
@@ -43,11 +38,9 @@ func sofrer_dano(dano):
 	# --- CÓDIGO PARA CRIAR O NÚMERO DE DANO ---
 	if damage_number_scene:
 		var damage_num = damage_number_scene.instantiate()
-		get_parent().add_child(damage_num) # Adiciona como irmão
-		# Posição ligeiramente acima e aleatória horizontalmente
+		get_parent().add_child(damage_num)
 		damage_num.global_position = global_position + Vector2(randf_range(-15, 15), -40)
 		damage_num.set_damage(dano)
-	# --- FIM DO CÓDIGO DO NÚMERO ---
 
 	vida -= dano
 	hit_flash()
@@ -73,10 +66,7 @@ func hit_flash():
 		tween.tween_property(sprite_node, "modulate", Color.WHITE, 0.1)
 		tween.tween_property(sprite_node, "modulate", Color(1,1,1,1), 0.1)
 
-#-----------------------------------------------------------------------------
 # FUNÇÃO PRINCIPAL (_physics_process)
-#-----------------------------------------------------------------------------
-# ... (_physics_process permanece igual ao seu código anterior) ...
 func _physics_process(delta):
 	if atordoado:
 		velocity = Vector2.ZERO
@@ -97,10 +87,8 @@ func _physics_process(delta):
 	else:
 		velocity = Vector2.ZERO
 	move_and_slide()
-#-----------------------------------------------------------------------------
+
 # FUNÇÃO DE TIRO
-#-----------------------------------------------------------------------------
-# ... (atirar permanece igual ao seu código anterior) ...
 func atirar():
 	if not is_instance_valid(jogador): return
 	pode_atirar = false
@@ -112,10 +100,8 @@ func atirar():
 		$TiroTimer.start(cadencia_tiro)
 	else:
 		print("AVISO em Atirador: Nó TiroTimer não encontrado.")
-#-----------------------------------------------------------------------------
+
 # FUNÇÕES DE SINAIS (Callbacks dos Timers)
-#-----------------------------------------------------------------------------
-# ... (_on_tiro_timer_timeout e _on_stun_timer_timeout permanecem iguais) ...
 func _on_tiro_timer_timeout():
 	pode_atirar = true
 

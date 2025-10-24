@@ -1,4 +1,3 @@
-# GameOverScreen.gd
 extends CanvasLayer
 
 # Sinais para avisar a Arena qual botão foi pressionado
@@ -15,14 +14,12 @@ func setup_screen(progress_percent: float, enemy_texture: Texture, quote: String
 	progress_bar.value = progress_percent
 	show()
 
-# Esta função é chamada quando o botão Tentar Novamente é pressionado
+# Função do botão tentar nomente 
 func _on_retry_button_pressed():
-	# Emite o sinal para a Arena ouvir
 	emit_signal("retry_pressed")
-	# Esconde a tela para que o jogador não possa clicar de novo
+	# Esconde a tela 
 	hide()
 
-# Esta função é chamada quando o botão Sair é pressionado
+# Função do botão Sair
 func _on_quit_button_pressed():
-	# Emite o sinal para a Arena ouvir
 	emit_signal("quit_pressed")
