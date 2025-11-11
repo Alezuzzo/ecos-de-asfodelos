@@ -1,0 +1,196 @@
+[gd_scene load_steps=3 format=3 uid="uid://d3f8yhv3pqm1e"]
+
+[ext_resource type="Script" path="res://scenes/menu/OptionsMenu.gd" id="1_options"]
+[ext_resource type="FontFile" uid="uid://cccl75xnkimhx" path="res://assets/fonts/Cinzel-VariableFont_wght.ttf" id="2_cinzel"]
+[ext_resource type="FontFile" uid="uid://dn136u0lunec2" path="res://assets/fonts/Texturina-VariableFont_opsz,wght.ttf" id="3_texturina"]
+
+[node name="OptionsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_options")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0627451, 0.0941176, 0.0627451, 0.95)
+
+[node name="Root" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 80
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 80
+
+[node name="VBox" type="VBoxContainer" parent="Root"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Root/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.15, 0.15, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("2_cinzel")
+theme_override_font_sizes/font_size = 80
+text = "⚙ OPÇÕES ⚙"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="Root/VBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="MusicVolume" type="HBoxContainer" parent="Root/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Arrow" type="Label" parent="Root/VBox/MusicVolume"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.15, 0.15, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
+[node name="VolumeLabel" type="Label" parent="Root/VBox/MusicVolume"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.61, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 36
+text = "MÚSICA: 100%"
+
+[node name="VolumeSlider" type="HSlider" parent="Root/VBox/MusicVolume"]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+max_value = 100.0
+step = 5.0
+value = 100.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="SFXVolume" type="HBoxContainer" parent="Root/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Arrow" type="Label" parent="Root/VBox/SFXVolume"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.15, 0.15, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
+[node name="VolumeLabel" type="Label" parent="Root/VBox/SFXVolume"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.61, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 36
+text = "EFEITOS: 100%"
+
+[node name="VolumeSlider" type="HSlider" parent="Root/VBox/SFXVolume"]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+max_value = 100.0
+step = 5.0
+value = 100.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="Spacer2" type="Control" parent="Root/VBox"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="FullscreenToggle" type="HBoxContainer" parent="Root/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Arrow" type="Label" parent="Root/VBox/FullscreenToggle"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.15, 0.15, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
+[node name="ToggleButton" type="Button" parent="Root/VBox/FullscreenToggle"]
+custom_minimum_size = Vector2(500, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.61, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 38
+text = "TELA CHEIA: SIM"
+flat = true
+
+[node name="Spacer3" type="Control" parent="Root/VBox"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="ControlsTitle" type="Label" parent="Root/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_cinzel")
+theme_override_font_sizes/font_size = 48
+text = "CONTROLES"
+horizontal_alignment = 1
+
+[node name="ControlsInfo" type="Label" parent="Root/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.7, 0.6, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 28
+text = "MOVIMENTO: W A S D
+ATIRAR: Setas Direcionais
+PAUSA: ESC"
+horizontal_alignment = 1
+
+[node name="Spacer4" type="Control" parent="Root/VBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="BackButton" type="HBoxContainer" parent="Root/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Arrow" type="Label" parent="Root/VBox/BackButton"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.15, 0.15, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
+[node name="Button" type="Button" parent="Root/VBox/BackButton"]
+custom_minimum_size = Vector2(400, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.61, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 42
+text = "VOLTAR"
+flat = true

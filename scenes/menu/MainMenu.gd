@@ -13,6 +13,7 @@ extends Control
 @onready var arrow_quit    : Label  = item_quit.get_node("ArrowQuit")
 
 const GAME_SCENE := "res://arena.tscn"  # ajuste se necessário
+const OPTIONS_SCENE := preload("res://scenes/menu/OptionsMenu.tscn")
 
 func _ready() -> void:
 	# Setas começam escondidas e centralizamos o pivot (não gira, mas é ok manter)
@@ -64,7 +65,8 @@ func _on_start() -> void:
 	get_tree().change_scene_to_file(GAME_SCENE)
 
 func _on_options() -> void:
-	_flash("OPTIONS (em breve)")
+	var options_menu = OPTIONS_SCENE.instantiate()
+	add_child(options_menu)
 
 func _on_quit() -> void:
 	get_tree().quit()
