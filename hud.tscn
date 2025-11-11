@@ -60,4 +60,20 @@ vertical_alignment = 1
 wait_time = 3.0
 one_shot = true
 
+[node name="PauseButton" type="Button" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -133.333
+offset_top = 20.0
+offset_right = -33.3333
+offset_bottom = 120.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.6, 0.15, 0.15, 1)
+theme_override_colors/font_hover_color = Color(0.88, 0.82, 0.61, 1)
+theme_override_font_sizes/font_size = 64
+text = "⚙"
+flat = true
+
 [connection signal="timeout" from="NotificacaoTimer" to="." method="_on_notificacao_timer_timeout"]
+[connection signal="pressed" from="PauseButton" to="." method="_on_pause_button_pressed"]

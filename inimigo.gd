@@ -15,7 +15,7 @@ var jogador = null
 var pode_causar_dano = true
 var atordoado = false
 
-var damage_number_scene = preload("res://DamageNumber.tscn") 
+var damage_number_scene = preload("res://damageNumber.tscn") 
 
 @onready var spawn_sound_player = $SpawnSoundPlayer
 @onready var death_sound_player = $DeathSoundPlayer

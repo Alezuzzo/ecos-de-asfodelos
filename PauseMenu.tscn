@@ -1,0 +1,137 @@
+[gd_scene load_steps=3 format=3 uid="uid://c2x8yhv3pqm1e"]
+
+[ext_resource type="Script" path="res://PauseMenu.gd" id="1_pause"]
+[ext_resource type="FontFile" uid="uid://cccl75xnkimhx" path="res://assets/fonts/Cinzel-VariableFont_wght.ttf" id="2_cinzel"]
+[ext_resource type="FontFile" uid="uid://dn136u0lunec2" path="res://assets/fonts/Texturina-VariableFont_opsz,wght.ttf" id="3_texturina"]
+
+[node name="PauseMenu" type="CanvasLayer"]
+process_mode = 3
+visible = false
+script = ExtResource("1_pause")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0627451, 0.0941176, 0.0627451, 0.85)
+
+[node name="CenterContainer" type="CenterContainer" parent="Background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Background/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Background/CenterContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.15, 0.15, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("2_cinzel")
+theme_override_font_sizes/font_size = 72
+text = "⚙ PAUSADO ⚙"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="Background/CenterContainer/VBox"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="ItemResume" type="HBoxContainer" parent="Background/CenterContainer/VBox"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="ArrowResume" type="Label" parent="Background/CenterContainer/VBox/ItemResume"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.15, 0.15, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
+[node name="ResumeButton" type="Button" parent="Background/CenterContainer/VBox/ItemResume"]
+custom_minimum_size = Vector2(400, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.61, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 42
+text = "RETORNAR AO JOGO"
+flat = true
+
+[node name="ItemVolume" type="HBoxContainer" parent="Background/CenterContainer/VBox"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="ArrowVolume" type="Label" parent="Background/CenterContainer/VBox/ItemVolume"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.15, 0.15, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
+[node name="VolumeLabel" type="Label" parent="Background/CenterContainer/VBox/ItemVolume"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.61, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 36
+text = "VOLUME: 100%"
+
+[node name="VolumeSlider" type="HSlider" parent="Background/CenterContainer/VBox/ItemVolume"]
+custom_minimum_size = Vector2(300, 40)
+layout_mode = 2
+max_value = 100.0
+step = 5.0
+value = 100.0
+tick_count = 5
+ticks_on_borders = true
+
+[node name="ItemQuit" type="HBoxContainer" parent="Background/CenterContainer/VBox"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="ArrowQuit" type="Label" parent="Background/CenterContainer/VBox/ItemQuit"]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.15, 0.15, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
+[node name="QuitButton" type="Button" parent="Background/CenterContainer/VBox/ItemQuit"]
+custom_minimum_size = Vector2(400, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.61, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 42
+text = "SAIR DO JOGO"
+flat = true
+
+[node name="Spacer2" type="Control" parent="Background/CenterContainer/VBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="HintLabel" type="Label" parent="Background/CenterContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
+theme_override_fonts/font = ExtResource("3_texturina")
+theme_override_font_sizes/font_size = 24
+text = "Pressione ESC para retornar"
+horizontal_alignment = 1

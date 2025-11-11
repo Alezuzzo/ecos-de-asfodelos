@@ -28,17 +28,25 @@ func atualizar_coracoes(saude_atual, saude_maxima):
 	for filho in container_coracoes.get_children():
 		filho.queue_free()
 	var total_de_containers = ceili(saude_maxima / 2.0)
-	
+
 	for i in range(total_de_containers):
 		var valor_do_espaco = (i + 1) * 2
-		
+
 		var tr = TextureRect.new()
-		
+
 		if saude_atual >= valor_do_espaco:
 			tr.texture = tex_coracao_cheio
 		elif saude_atual == valor_do_espaco - 1:
 			tr.texture = tex_meio_coracao
 		else:
 			tr.texture = tex_coracao_vazio
-			
+
 		container_coracoes.add_child(tr)
+
+func _on_pause_button_pressed():
+	# Busca o PauseMenu na arena e abre
+	var arena = get_parent()
+	if arena:
+		var pause_menu = arena.get_node_or_null("PauseMenu")
+		if pause_menu and pause_menu.has_method("toggle_pause"):
+			pause_menu.toggle_pause()

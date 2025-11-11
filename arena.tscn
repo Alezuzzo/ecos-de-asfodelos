@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://swhhkx7vnfua"]
+[gd_scene load_steps=28 format=3 uid="uid://swhhkx7vnfua"]
 
 [ext_resource type="Script" uid="uid://2sj4gixj5wx5" path="res://arena.gd" id="1_444vf"]
 [ext_resource type="PackedScene" uid="uid://4vicljavkaft" path="res://jogador.tscn" id="2_27ga2"]
@@ -21,6 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://dcheldmvos7jo" path="res://assets/cartomante/cartomante6.png" id="14_3vubs"]
 [ext_resource type="AudioStream" uid="uid://b5f6ov0ohos70" path="res://assets/musica/entering-the-spiritual-arena.ogg" id="19_3vubs"]
 [ext_resource type="AudioStream" uid="uid://chev76d88gnj3" path="res://assets/musica/GuardianOfSoul.ogg" id="20_6p4q2"]
+[ext_resource type="PackedScene" uid="uid://c2x8yhv3pqm1e" path="res://PauseMenu.tscn" id="21_pause"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1pekq"]
 texture = ExtResource("7_1s3fb")
@@ -10668,6 +10669,8 @@ wait_time = 10.0
 [node name="HUD" parent="." instance=ExtResource("7_pbtuc")]
 scale = Vector2(0.3, 0.3)
 transform = Transform2D(0.3, 0, 0, 0.3, 0, 0)
+
+[node name="PauseMenu" parent="." instance=ExtResource("21_pause")]
 
 [node name="CartomanteSprite" type="AnimatedSprite2D" parent="."]
 visible = false

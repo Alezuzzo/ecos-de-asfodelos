@@ -43,7 +43,7 @@ enum State {ESPERANDO, ATACANDO, AVANCANDO}
 var estado_atual = State.ESPERANDO
 var projetil_chefe_cena = preload("res://projetil_chefe.tscn")
 var projetil_chefe_fase2_cena = preload("res://projetil_chefe_2.tscn")
-var damage_number_scene = preload("res://DamageNumber.tscn")
+var damage_number_scene = preload("res://damageNumber.tscn")
 var tamanho_da_tela: Vector2
 var metade_do_tamanho_sprite: Vector2
 
