@@ -7,119 +7,104 @@ extends Node2D
 @export var victory_screen_cena: PackedScene
 
 @export_category("MODO TESTE")
-@export var MODO_TESTE_ATIVADO = false # MUDE PARA true PARA IR DIRETO AO CHEFE
-
+@export var MODO_TESTE_ATIVADO = false
 
 @onready var music_combate = $MusicCombate
 @onready var boss_music_player = $BossMusicPlayer
-# ----------------------------------------------
 
-# --- Variáveis de Estado ---
 var jogador_node = null
-var luta_contra_chefe_ativa = false # Flag principal de controle
+var luta_contra_chefe_ativa = false
 
-# --- Variáveis das Ondas ---
 var onda_atual = 0
 var inimigos_vivos = 0
 var base_inimigos_por_onda = 3
-var onda_do_chefe = 5 # Define em qual onda o chefe aparece
+var onda_do_chefe = 5
 
 var tamanho_da_tela: Vector2
 
 func _ready():
 	jogador_node = get_node_or_null("YSortContainer/Jogador")
 	tamanho_da_tela = get_viewport_rect().size
-	
-	# Verifica se o jogador foi encontrado antes de tentar acessá-lo
+
 	if is_instance_valid(jogador_node):
 		var hud_node = get_node_or_null("HUD")
 		if is_instance_valid(hud_node):
-			jogador_node.hud = hud_node # Passa a referência do HUD
+			jogador_node.hud = hud_node
 			jogador_node.saude_alterada.connect(hud_node.atualizar_coracoes)
-			# Atualiza o HUD inicial apenas se o jogador e o HUD existirem
 			hud_node.atualizar_coracoes(jogador_node.saude_atual, jogador_node.saude_maxima)
 		else:
 			printerr("ERRO CRÍTICO em Arena _ready(): Nó HUD não encontrado.")
 
-		jogador_node.morreu.connect(_on_jogador_morreu) # Conecta sinal de morte
+		jogador_node.morreu.connect(_on_jogador_morreu)
 	else:
 		printerr("ERRO CRÍTICO em Arena _ready(): Nó Jogador não encontrado no caminho esperado ($YSortContainer/Jogador).")
-		get_tree().quit() # Fecha o jogo se não encontrar o jogador
+		get_tree().quit()
 
-	# Verifica se a TelaMelhorias existe antes de conectar
 	var tela_melhorias_node = get_node_or_null("TelaMelhorias")
 	if is_instance_valid(tela_melhorias_node):
 		tela_melhorias_node.melhoria_selecionada.connect(_on_melhoria_selecionada)
 	else:
 		printerr("ERRO CRÍTICO em Arena _ready(): Nó TelaMelhorias não encontrado.")
 
-	# --- MODO TESTE ---
 	if MODO_TESTE_ATIVADO:
 		print("⚠️ MODO TESTE ATIVADO - Iniciando luta contra o chefe!")
-		call_deferred("iniciar_luta_chefe") # Adia para garantir que _ready termine
+		call_deferred("iniciar_luta_chefe")
 	else:
-		# Inicia os timers do jogo normalmente
 		var start_timer = get_node_or_null("StartTimer")
 		if is_instance_valid(start_timer): start_timer.start()
 		var evento_timer = get_node_or_null("EventoTimer")
 		if is_instance_valid(evento_timer): evento_timer.start()
 
-		# --- LÓGICA DE MÚSICA COM LOOP MANUAL PARA ITCH.IO
+		# Loop manual para compatibilidade com HTML5/Itch.io
 		if is_instance_valid(music_combate):
 			music_combate.play()
-			# Conecta o sinal 'finished' de volta ao 'play' para loop manual (HTML5)
 			if not music_combate.finished.is_connected(music_combate.play):
 				music_combate.finished.connect(music_combate.play)
 		if is_instance_valid(boss_music_player):
 			boss_music_player.stop()
-			# Conecta o sinal 'finished' de volta ao 'play' para loop manual (HTML5)
 			if not boss_music_player.finished.is_connected(boss_music_player.play):
 				boss_music_player.finished.connect(boss_music_player.play)
 
 
-# LÓGICA DAS ONDAS E INIMIGOS
 func iniciar_nova_onda():
 	if is_instance_valid(jogador_node):
 		jogador_node.baluarte_usado_na_onda = false
-	
+
 	onda_atual += 1
-	
+
 	if onda_atual == onda_do_chefe:
 		call_deferred("iniciar_luta_chefe")
 		return
-		
+
 	print("--- INICIANDO ONDA ", onda_atual, " ---")
 	var quantidade_a_spawnar = base_inimigos_por_onda + (onda_atual * 2)
 	inimigos_vivos = quantidade_a_spawnar
-	
+
 	call_deferred("_spawn_inimigos_em_loop", quantidade_a_spawnar)
 
-# Função auxiliar segura para spawnar inimigos com delay
 func _spawn_inimigos_em_loop(quantidade):
 	for i in range(quantidade):
-		if luta_contra_chefe_ativa: return # Para se o chefe começar no meio
+		if luta_contra_chefe_ativa: return
 		spawnar_inimigo()
 		await get_tree().create_timer(0.3).timeout
 
 func spawnar_inimigo():
-	# Trava de segurança para ondas normais
 	if luta_contra_chefe_ativa: return
-	if not is_instance_valid(jogador_node): return # Verifica jogador
+	if not is_instance_valid(jogador_node): return
 
 	var inimigo_escolhido = cenas_inimigos.pick_random()
-	if not inimigo_escolhido: return # Verifica se há inimigos para escolher
-	
+	if not inimigo_escolhido: return
+
 	var inimigo = inimigo_escolhido.instantiate()
 	inimigo.connect("morreu", _on_inimigo_morreu)
-	
+
 	var ysort_container = get_node_or_null("YSortContainer")
 	if is_instance_valid(ysort_container):
 		ysort_container.add_child(inimigo)
 	else:
 		printerr("ERRO em spawnar_inimigo: YSortContainer não encontrado.")
-		return # Não adiciona o inimigo se o container não existe
+		return
 
-	# Define posição aleatória nas bordas
 	var spawn_pos = Vector2()
 	var borda = randi() % 4
 	match borda:
@@ -130,7 +115,6 @@ func spawnar_inimigo():
 	inimigo.global_position = spawn_pos
 	inimigo.jogador = jogador_node
 
-# --- FUNÇÃO EXCLUSIVA PARA O CHEFE ---
 func spawnar_inimigo_para_chefe():
 	if not is_instance_valid(jogador_node): return
 
@@ -157,23 +141,21 @@ func spawnar_inimigo_para_chefe():
 	inimigo.global_position = spawn_pos
 	inimigo.jogador = jogador_node
 
-# LÓGICA DO CHEFE
 func iniciar_luta_chefe():
 	print("--- O GUARDIÃO APARECEU! ---")
-	luta_contra_chefe_ativa = true # Define a flag imediatamente
+	luta_contra_chefe_ativa = true
 	var evento_timer = get_node_or_null("EventoTimer")
 	if is_instance_valid(evento_timer): evento_timer.stop()
-	
+
 	if is_instance_valid(music_combate): music_combate.stop()
 	if is_instance_valid(boss_music_player): boss_music_player.play()
-	
-	# Limpa inimigos normais
+
 	for inimigo in get_tree().get_nodes_in_group("inimigos"):
 		if is_instance_valid(inimigo): inimigo.queue_free()
-		
-	await get_tree().process_frame 
-		
-	if not cena_chefe: # Verifica se a cena do chefe foi definida
+
+	await get_tree().process_frame
+
+	if not cena_chefe:
 		printerr("ERRO CRÍTICO em iniciar_luta_chefe: Cena do Chefe não definida no Inspetor!")
 		return
 		
@@ -205,9 +187,7 @@ func verificar_sinergias(jogador):
 		var hud_node = get_node_or_null("HUD")
 		if is_instance_valid(hud_node) and hud_node.has_method("mostrar_notificacao"):
 			hud_node.mostrar_notificacao("Baluarte da alma completo!")
-		
 
-# FUNÇÕES CONECTADAS A SINAIS (Callbacks)
 func _on_inimigo_morreu():
 	if luta_contra_chefe_ativa: return
 	
@@ -272,7 +252,6 @@ func _on_evento_timer_timeout():
 		add_child(fonte)
 		print("FONTE DE VIDA APARECEU!")
 
-# FUNÇÕES DE GAME OVER / VITÓRIA
 func _on_jogador_morreu():
 	get_tree().call_deferred("set_pause", true)
 	if luta_contra_chefe_ativa:
@@ -313,12 +292,10 @@ func _on_retry_pressed():
 
 func _on_quit_pressed():
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scenes/menu/MainMenu.tscn") 
+	get_tree().change_scene_to_file("res://scenes/menu/MainMenu.tscn")
 
-# --- Funções para a tela de vitória ---
 func _on_play_again_pressed():
 	get_tree().paused = false
-	# Volta para o menu principal após a vitória
 	get_tree().change_scene_to_file("res://scenes/menu/MainMenu.tscn") 
 
 func _on_victory_quit_pressed():

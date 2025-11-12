@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://cg0t7flgklbhv"]
+[gd_scene load_steps=4 format=3 uid="uid://cg0t7flgklbhv"]
 
 [ext_resource type="Script" uid="uid://bfwdhrs5yuqw6" path="res://CardUI.gd" id="1_gf2xd"]
 [ext_resource type="Texture2D" uid="uid://ddhosx4va3pqq" path="res://assets/cartas/coroadomartir/coroadomartir1.png" id="2_tkyow"]
@@ -67,32 +67,19 @@ animations = [{
 }]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_huidv"]
-bg_color = Color(0.84406894, 0.502775, 0.26638845, 1)
-
-[sub_resource type="Gradient" id="Gradient_burn"]
-offsets = PackedFloat32Array(0, 0.3, 0.6, 1)
-colors = PackedColorArray(1, 0.8, 0.2, 1, 1, 0.4, 0, 1, 0.9, 0.1, 0, 0.6, 0.2, 0.0, 0.0, 0)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_burn"]
-gradient = SubResource("Gradient_burn")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_burn"]
-particle_flag_disable_z = true
-emission_shape = 3
-emission_box_extents = Vector3(80, 5, 1)
-direction = Vector3(0, -1, 0)
-spread = 45.0
-initial_velocity_min = 40.0
-initial_velocity_max = 100.0
-angular_velocity_min = -180.0
-angular_velocity_max = 180.0
-gravity = Vector3(0, -15, 0)
-scale_min = 3.0
-scale_max = 8.0
-color_ramp = SubResource("GradientTexture1D_burn")
-turbulence_enabled = true
-turbulence_noise_strength = 2.0
-turbulence_noise_scale = 5.0
+bg_color = Color(0.0941176, 0.0627451, 0.0627451, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.15, 0.15, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 4
+shadow_offset = Vector2(2, 2)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_focus"]
 
@@ -140,11 +127,17 @@ anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
+offset_left = 5.0
 offset_top = 60.0
-offset_bottom = 88.0
+offset_right = -5.0
+offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.88, 0.82, 0.61, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_huidv")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -163,12 +156,3 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
 flat = true
-
-[node name="BurnParticles" type="GPUParticles2D" parent="."]
-position = Vector2(93, 125)
-amount = 100
-process_material = SubResource("ParticleProcessMaterial_burn")
-lifetime = 2.0
-explosiveness = 0.4
-randomness = 0.3
-emitting = false

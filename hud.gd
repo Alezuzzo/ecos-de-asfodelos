@@ -5,7 +5,7 @@ var tex_meio_coracao = preload("res://assets/coracao_vida/meio_coracao.png")
 var tex_coracao_vazio = preload("res://assets/coracao_vida/coracao_vazio.png")
 
 @onready var container_coracoes = $ContainerCoracoes
-@onready var foco_timer_ui = $FocoTimerUI # Pega a referência da ProgressBar
+@onready var foco_timer_ui = $FocoTimerUI
 @onready var notificacao_label = $NotificacaoLabel
 @onready var notificacao_timer = $NotificacaoTimer
 
@@ -24,14 +24,12 @@ func atualizar_timer_foco(progresso: float):
 	foco_timer_ui.value = progresso * 100.0
 
 func atualizar_coracoes(saude_atual, saude_maxima):
-	#Limpa os corações antigos que estavam na tela.
 	for filho in container_coracoes.get_children():
 		filho.queue_free()
 	var total_de_containers = ceili(saude_maxima / 2.0)
 
 	for i in range(total_de_containers):
 		var valor_do_espaco = (i + 1) * 2
-
 		var tr = TextureRect.new()
 
 		if saude_atual >= valor_do_espaco:
@@ -44,7 +42,6 @@ func atualizar_coracoes(saude_atual, saude_maxima):
 		container_coracoes.add_child(tr)
 
 func _on_pause_button_pressed():
-	# Busca o PauseMenu na arena e abre
 	var arena = get_parent()
 	if arena:
 		var pause_menu = arena.get_node_or_null("PauseMenu")

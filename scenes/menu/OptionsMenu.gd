@@ -1,6 +1,5 @@
 extends Control
 
-# Referências dos nós
 @onready var music_slider: HSlider = $Root/VBox/MusicVolume/VolumeSlider
 @onready var music_label: Label = $Root/VBox/MusicVolume/VolumeLabel
 @onready var sfx_slider: HSlider = $Root/VBox/SFXVolume/VolumeSlider
@@ -17,10 +16,8 @@ const CONFIG_FILE = "user://settings.cfg"
 var config = ConfigFile.new()
 
 func _ready() -> void:
-	# Carregar configurações salvas
 	_load_settings()
 
-	# Configurar setas
 	for arrow in [arrow_music, arrow_sfx, arrow_fullscreen, arrow_back]:
 		if arrow == null: continue
 		if arrow.text.strip_edges() == "": arrow.text = "▶"
@@ -30,7 +27,6 @@ func _ready() -> void:
 		arrow.pivot_offset = arrow.size / 2.0
 		arrow.resized.connect(func(): arrow.pivot_offset = arrow.size / 2.0)
 
-	# Configurar sliders
 	for slider in [music_slider, sfx_slider]:
 		if slider == null: continue
 		slider.min_value = 0.0
@@ -39,11 +35,9 @@ func _ready() -> void:
 		slider.focus_mode = Control.FOCUS_ALL
 		slider.mouse_entered.connect(func(): slider.grab_focus())
 
-	# Conectar sinais dos sliders
 	music_slider.value_changed.connect(_on_music_volume_changed)
 	sfx_slider.value_changed.connect(_on_sfx_volume_changed)
 
-	# Conectar foco dos sliders às setas
 	music_slider.focus_entered.connect(func():
 		arrow_music.visible = true
 		_tint(music_label, Color(0.95, 0.85, 0.55))
@@ -62,27 +56,22 @@ func _ready() -> void:
 		_tint(sfx_label, Color.WHITE)
 	)
 
-	# Configurar botões
 	for btn in [fullscreen_button, back_button]:
 		if btn == null: continue
 		btn.flat = true
 		btn.focus_mode = Control.FOCUS_ALL
 		btn.mouse_entered.connect(func(): btn.grab_focus())
 
-	# Conectar foco dos botões às setas
 	_wire_arrow(fullscreen_button, arrow_fullscreen)
 	_wire_arrow(back_button, arrow_back)
 
-	# Conectar ações dos botões
 	fullscreen_button.pressed.connect(_on_fullscreen_toggle)
 	back_button.pressed.connect(_on_back_pressed)
 
-	# Atualizar labels iniciais
 	_update_music_label(music_slider.value)
 	_update_sfx_label(sfx_slider.value)
 	_update_fullscreen_button()
 
-	# Foco inicial
 	music_slider.grab_focus()
 
 func _wire_arrow(btn: Button, arrow: Label) -> void:
@@ -107,8 +96,6 @@ func _on_music_volume_changed(value: float) -> void:
 	_save_settings()
 
 func _on_sfx_volume_changed(value: float) -> void:
-	# Por enquanto, controla o mesmo bus Master
-	# Se você criar um bus separado para SFX no AudioBus, pode usar aqui
 	_update_sfx_label(value)
 	_save_settings()
 
@@ -144,23 +131,19 @@ func _save_settings() -> void:
 func _load_settings() -> void:
 	var err = config.load(CONFIG_FILE)
 	if err == OK:
-		# Carregar volume de música
 		var music_vol = config.get_value("audio", "music_volume", 100.0)
 		music_slider.value = music_vol
 		var volume_db = linear_to_db(music_vol / 100.0)
 		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), volume_db)
 
-		# Carregar volume de SFX
 		var sfx_vol = config.get_value("audio", "sfx_volume", 100.0)
 		sfx_slider.value = sfx_vol
 
-		# Carregar modo de tela
 		var is_fullscreen = config.get_value("video", "fullscreen", true)
 		if is_fullscreen:
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 		else:
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 	else:
-		# Valores padrão
 		music_slider.value = 100.0
 		sfx_slider.value = 100.0

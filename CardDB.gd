@@ -1,9 +1,7 @@
 extends Node
 
-# A chance de uma carta corrompida aparecer (0.25 = 25%)
 const CHANCE_CARTA_CORROMPIDA = 0.25
 
-# Baralho de cartas normais
 const CARDS = {
 	"vontade_de_ferro": {
 		"nome": "Vontade de Ferro",
@@ -25,7 +23,6 @@ const CARDS = {
 	},
 }
 
-# Baralho de cartas corrompidas
 const CORRUPTED_CARDS = {
 	"coroa_do_martir": {
 		"nome": "Coroa do Mártir",
@@ -37,11 +34,9 @@ const CORRUPTED_CARDS = {
 	},
 }
 
-# --- FUNÇÃO DE SORTEIO ALEATÓRIA ---
 func sortear_cartas(quantidade = 3):
 	var sorteadas = []
-	
-	# Decide se uma carta corrompida vai aparecer
+
 	if randf() < CHANCE_CARTA_CORROMPIDA and CORRUPTED_CARDS.size() > 0:
 		print("DEBUG: Uma carta corrompida foi sorteada!")
 		
@@ -53,20 +48,18 @@ func sortear_cartas(quantidade = 3):
 		chaves_normais.shuffle()
 		sorteadas.append(chaves_normais[0])
 		sorteadas.append(chaves_normais[1])
-		
-		# Embaralha o resultado final para que a corrompida não seja sempre a primeira
+
 		sorteadas.shuffle()
 	else:
 		print("DEBUG: Nenhuma carta corrompida foi sorteada.")
-		
+
 		var chaves = CARDS.keys()
 		chaves.shuffle()
 		for i in range(min(quantidade, chaves.size())):
 			sorteadas.append(chaves[i])
-			
+
 	return sorteadas
 
-# Função auxiliar
 func get_card_info(id_carta):
 	if CARDS.has(id_carta):
 		return CARDS[id_carta]

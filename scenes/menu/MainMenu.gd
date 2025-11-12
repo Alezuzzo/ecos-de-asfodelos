@@ -12,11 +12,10 @@ extends Control
 @onready var arrow_options : Label  = item_options.get_node("ArrowOptions")
 @onready var arrow_quit    : Label  = item_quit.get_node("ArrowQuit")
 
-const GAME_SCENE := "res://arena.tscn"  # ajuste se necessário
+const GAME_SCENE := "res://arena.tscn"
 const OPTIONS_SCENE := preload("res://scenes/menu/OptionsMenu.tscn")
 
 func _ready() -> void:
-	# Setas começam escondidas e centralizamos o pivot (não gira, mas é ok manter)
 	for a in [arrow_start, arrow_options, arrow_quit]:
 		if a == null: continue
 		if a.text.strip_edges() == "": a.text = "▶"
@@ -26,31 +25,27 @@ func _ready() -> void:
 		a.pivot_offset = a.size / 2.0
 		a.resized.connect(func(): a.pivot_offset = a.size / 2.0)
 
-	# Botões: fundo invisível e foco por mouse/teclado
 	for b in [start_button, options_button, quit_button]:
 		if b == null: continue
 		b.flat = true
 		b.focus_mode = Control.FOCUS_ALL
 		b.mouse_entered.connect(func(): b.grab_focus())
 
-	# Foco mostra/esconde seta e realça texto
 	_wire_arrow_static(start_button,  arrow_start)
 	_wire_arrow_static(options_button, arrow_options)
 	_wire_arrow_static(quit_button,   arrow_quit)
 
-	# Ações
 	start_button.pressed.connect(_on_start)
 	options_button.pressed.connect(_on_options)
 	quit_button.pressed.connect(_on_quit)
 
-	# Foco inicial
 	start_button.grab_focus()
 
 func _wire_arrow_static(btn: Button, arrow: Label) -> void:
 	if btn == null or arrow == null: return
 	btn.focus_entered.connect(func():
 		arrow.visible = true
-		_tint(btn, Color(0.95, 0.85, 0.55))  # dourado suave
+		_tint(btn, Color(0.95, 0.85, 0.55))
 	)
 	btn.focus_exited.connect(func():
 		arrow.visible = false
@@ -71,7 +66,6 @@ func _on_options() -> void:
 func _on_quit() -> void:
 	get_tree().quit()
 
-# Mensagem temporária
 func _flash(msg: String) -> void:
 	var l := Label.new()
 	l.text = msg

@@ -1,22 +1,19 @@
 extends CharacterBody2D
 
 signal saude_alterada(saude_atual, saude_maxima)
-signal morreu 
+signal morreu
 
-# ATRIBUTOS DO JOGADOR
 @export var velocidade = 300
 @export var cadencia_tiro = 0.25
 @export var dano_projetil = 1
 @export var saude_maxima = 6
 var saude_atual = 0
 
-# REFERÊNCIAS DE CENAS E NÓS
 var projetil_cena = preload("res://projetil.tscn")
 var onda_de_choque_cena = preload("res://onda_de_choque.tscn")
 var hud = null
 @onready var shot_sound_player = $ShotSoundPlayer
 
-# ESTADO DAS MELHORIAS E CONTROLE
 var pode_atirar = true
 var cartas_coletadas = []
 var tem_guardiao_caido = false
@@ -48,10 +45,8 @@ func _physics_process(delta):
 	handle_movimento()
 	handle_tiro()
 	handle_animacao()
-	clamp_position_to_screen() # Chama a função de limitação de tela
+	clamp_position_to_screen()
 
-
-# FUNÇÕES DE CONTROLE
 func handle_movimento():
 	var direcao = Input.get_vector("esquerda", "direita", "cima", "baixo")
 	velocity = direcao * velocidade
@@ -82,7 +77,7 @@ func handle_animacao():
 		if ultima_direcao_tiro.y < 0: sprite_animado.play("walk_up")
 		elif ultima_direcao_tiro.y > 0: sprite_animado.play("walk_down")
 
-func clamp_position_to_screen(): # Função para limitar à tela
+func clamp_position_to_screen():
 	var tamanho_da_tela = get_viewport_rect().size
 	var collision_shape_node = $CollisionShape2D
 	if is_instance_valid(collision_shape_node) and is_instance_valid(collision_shape_node.shape):
@@ -92,11 +87,9 @@ func clamp_position_to_screen(): # Função para limitar à tela
 		global_position.x = clamp(global_position.x, metade_largura, tamanho_da_tela.x - metade_largura)
 		global_position.y = clamp(global_position.y, metade_altura, tamanho_da_tela.y - metade_altura)
 	else:
-		# Fallback seguro se a colisão não estiver pronta
 		global_position.x = clamp(global_position.x, 0, tamanho_da_tela.x)
 		global_position.y = clamp(global_position.y, 0, tamanho_da_tela.y)
 
-# FUNÇÕES DE AÇÃO E EFEITOS
 func atirar(direcao_tiro: Vector2):
 	shot_sound_player.play()
 	pode_atirar = false
@@ -146,8 +139,6 @@ func piscar():
 	tween.tween_property(self, "modulate:a", 0.3, 0.25)
 	tween.tween_property(self, "modulate:a", 1.0, 0.25)
 
-
-# FUNÇÕES CHAMADAS PELAS CARTAS
 func aumentar_vida_maxima(quantidade):
 	saude_maxima += quantidade
 	curar(quantidade)
@@ -182,7 +173,6 @@ func ativar_coroa_do_martir():
 	projeteis_teleguiados = true
 	pode_curar = false
 
-# FUNÇÕES DE SINAIS (Callbacks)
 func _on_timer_cadencia_timeout():
 	pode_atirar = true
 
