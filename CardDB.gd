@@ -21,6 +21,24 @@ const CARDS = {
 		"afinidade": "Resiliência",
 		"imagem": "res://assets/cartas/afinidade resiliencia/focopenitente.png"
 	},
+	"passo_etereo": {
+		"nome": "Passo Etéreo",
+		"descricao": "Sua forma se torna leve. (+20% Velocidade de Movimento)",
+		"afinidade": "Espectro",
+		"imagem": "res://assets/cartas/afinidade do espectro/passo_etereo.png" 
+	},
+	"lagrimas_perfurantes": {
+		"nome": "Lágrimas Perfurantes",
+		"descricao": "Seus projéteis atravessam os inimigos, atingindo múltiplos alvos.",
+		"afinidade": "Espectro",
+		"imagem": "res://assets/cartas/afinidade do espectro/lagrimasPerfurantes.png" 
+	},
+	"forma_fantasma": {
+		"nome": "Forma Fantasmagórica",
+		"descricao": "Você ganha 10% de chance de ignorar qualquer dano recebido.",
+		"afinidade": "Espectro",
+		"imagem": "res://assets/cartas/afinidade do espectro/FormaFantasmagórica.png" 
+	},
 }
 
 const CORRUPTED_CARDS = {
