@@ -25,7 +25,14 @@ var onda_do_chefe = 5
 
 var tamanho_da_tela: Vector2
 
+var difficulty_multiplier = {
+	"easy": 1.0,
+	"normal": 1.0,
+	"hard": 1.0
+}
+
 func _ready():
+	aplicar_dificuldade()
 	# Busca segura pelo nó do jogador
 	jogador_node = get_node_or_null("YSortContainer/Jogador")
 	tamanho_da_tela = get_viewport_rect().size
@@ -77,7 +84,17 @@ func _ready():
 			if not boss_music_player.finished.is_connected(boss_music_player.play):
 				boss_music_player.finished.connect(boss_music_player.play)
 
-# LÓGICA DAS ONDAS E INIMIGOS
+func aplicar_dificuldade():
+	var difficulty = GameSettings.get_difficulty()
+	print("Aplicando dificuldade: ", difficulty)
+
+	match difficulty:
+		"easy":
+			pass
+		"normal":
+			pass
+		"hard":
+			pass
 
 func iniciar_nova_onda():
 	if is_instance_valid(jogador_node):

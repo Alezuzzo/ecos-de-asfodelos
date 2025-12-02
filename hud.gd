@@ -8,6 +8,10 @@ var tex_coracao_vazio = preload("res://assets/coracao_vida/coracao_vazio.png")
 @onready var foco_timer_ui = $FocoTimerUI
 @onready var notificacao_label = $NotificacaoLabel
 @onready var notificacao_timer = $NotificacaoTimer
+@onready var difficulty_label = $DifficultyLabel
+
+func _ready():
+	atualizar_label_dificuldade()
 
 func mostrar_notificacao(texto: String):
 	notificacao_label.text = texto
@@ -40,6 +44,22 @@ func atualizar_coracoes(saude_atual, saude_maxima):
 			tr.texture = tex_coracao_vazio
 
 		container_coracoes.add_child(tr)
+
+func atualizar_label_dificuldade():
+	if not difficulty_label:
+		return
+
+	var difficulty = GameSettings.get_difficulty()
+	match difficulty:
+		"easy":
+			difficulty_label.text = "FÁCIL"
+			difficulty_label.modulate = Color(0.4, 0.8, 0.4, 1)
+		"normal":
+			difficulty_label.text = "NORMAL"
+			difficulty_label.modulate = Color(0.88, 0.82, 0.61, 1)
+		"hard":
+			difficulty_label.text = "DIFÍCIL"
+			difficulty_label.modulate = Color(0.9, 0.3, 0.3, 1)
 
 func _on_pause_button_pressed():
 	var arena = get_parent()

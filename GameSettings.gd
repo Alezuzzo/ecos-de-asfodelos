@@ -2,6 +2,7 @@ extends Node
 
 const CONFIG_FILE = "user://settings.cfg"
 var config = ConfigFile.new()
+var current_difficulty: String = "normal"
 
 func _ready() -> void:
 	load_settings()
@@ -33,3 +34,10 @@ func save_default_settings() -> void:
 	# Aplicar configurações padrão
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), 0.0)
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+
+func set_difficulty(difficulty: String) -> void:
+	current_difficulty = difficulty
+	print("Dificuldade selecionada: ", difficulty)
+
+func get_difficulty() -> String:
+	return current_difficulty

@@ -12,7 +12,7 @@ extends Control
 @onready var arrow_options : Label  = item_options.get_node("ArrowOptions")
 @onready var arrow_quit    : Label  = item_quit.get_node("ArrowQuit")
 
-const GAME_SCENE := "res://arena.tscn"
+const DIFFICULTY_SCENE := preload("res://scenes/menu/DifficultySelect.tscn")
 const OPTIONS_SCENE := preload("res://scenes/menu/OptionsMenu.tscn")
 
 func _ready() -> void:
@@ -57,7 +57,8 @@ func _tint(node: CanvasItem, col: Color) -> void:
 	tw.tween_property(node, "modulate", col, 0.08)
 
 func _on_start() -> void:
-	get_tree().change_scene_to_file(GAME_SCENE)
+	var difficulty_menu = DIFFICULTY_SCENE.instantiate()
+	add_child(difficulty_menu)
 
 func _on_options() -> void:
 	var options_menu = OPTIONS_SCENE.instantiate()
