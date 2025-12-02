@@ -90,11 +90,14 @@ func aplicar_dificuldade():
 
 	match difficulty:
 		"easy":
-			pass
+			onda_do_chefe = 3
+			print("Modo FÁCIL: Chefe aparecerá na onda 3")
 		"normal":
-			pass
+			onda_do_chefe = 4
+			print("Modo NORMAL: Chefe aparecerá na onda 4")
 		"hard":
-			pass
+			onda_do_chefe = 5
+			print("Modo DIFÍCIL: Chefe aparecerá na onda 5")
 
 func iniciar_nova_onda():
 	if is_instance_valid(jogador_node):
