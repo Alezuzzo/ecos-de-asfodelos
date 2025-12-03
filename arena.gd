@@ -90,14 +90,14 @@ func aplicar_dificuldade():
 
 	match difficulty:
 		"easy":
-			onda_do_chefe = 3
-			print("Modo FÁCIL: Chefe aparecerá na onda 3")
-		"normal":
 			onda_do_chefe = 4
-			print("Modo NORMAL: Chefe aparecerá na onda 4")
+			print("Modo FÁCIL: Chefe aparecerá na onda 4")
+		"normal":
+			onda_do_chefe = 5
+			print("Modo NORMAL: Chefe aparecerá na onda 5")
 		"hard":
-			onda_do_chefe = 6
-			print("Modo DIFÍCIL: Chefe aparecerá na onda 6")
+			onda_do_chefe = 7
+			print("Modo DIFÍCIL: Chefe aparecerá na onda 7")
 
 func iniciar_nova_onda():
 	if is_instance_valid(jogador_node):
@@ -182,39 +182,59 @@ func spawnar_inimigo_para_chefe():
 	inimigo.global_position = spawn_pos
 	inimigo.jogador = jogador_node
 
-# LÓGICA DO CHEFE
-
 func iniciar_luta_chefe():
-	print("--- O GUARDIÃO APARECEU! ---")
+	print("--- PREPARANDO PARA A CHEGADA DO GUARDIÃO... ---")
 	luta_contra_chefe_ativa = true
 	var evento_timer = get_node_or_null("EventoTimer")
 	if is_instance_valid(evento_timer): evento_timer.stop()
-	
+
+	# Para a música de combate
 	if is_instance_valid(music_combate): music_combate.stop()
-	if is_instance_valid(boss_music_player): boss_music_player.play()
-	
-	# Limpa inimigos normais ANTES de adicionar o chefe
+
+	# Remove todos os inimigos
 	for inimigo in get_tree().get_nodes_in_group("inimigos"):
 		if is_instance_valid(inimigo):
 			inimigo.queue_free()
-		
+
 	await get_tree().process_frame
-		
+
 	if not cena_chefe:
 		printerr("ERRO CRÍTICO em iniciar_luta_chefe: Cena do Chefe não definida no Inspetor!")
 		return
-		
+
+	# Aguarda um momento antes do grito
+	await get_tree().create_timer(1.0).timeout
+
+	print("--- O GUARDIÃO ESTÁ CHEGANDO! ---")
+
+	# Instancia o chefe (mas ainda não o adiciona à cena)
 	var chefe = cena_chefe.instantiate()
 	chefe.name = "Guardiao"
 	chefe.position = tamanho_da_tela / 2
 	chefe.jogador = jogador_node
-	
+
 	var ysort_container = get_node_or_null("YSortContainer")
-	if is_instance_valid(ysort_container):
-		ysort_container.add_child(chefe)
-		chefe.connect("morreu", _on_chefe_morreu)
-	else:
+	if not is_instance_valid(ysort_container):
 		printerr("ERRO CRÍTICO em iniciar_luta_chefe: YSortContainer não encontrado para adicionar o chefe.")
+		return
+
+	# Adiciona o chefe à cena
+	ysort_container.add_child(chefe)
+	chefe.connect("morreu", _on_chefe_morreu)
+
+	# Obtém o AudioStreamPlayer do grito do chefe
+	var scream_player = chefe.get_node_or_null("PeriodicSoundPlayer")
+	if is_instance_valid(scream_player):
+		scream_player.play()
+		print("--- GRITO DO GUARDIÃO! ---")
+
+	# Aguarda o grito terminar (aproximadamente 2 segundos)
+	await get_tree().create_timer(2.0).timeout
+
+	print("--- O GUARDIÃO APARECEU! ---")
+
+	# Inicia a música do chefe
+	if is_instance_valid(boss_music_player): boss_music_player.play()
 
 	
 func verificar_sinergias(jogador):
