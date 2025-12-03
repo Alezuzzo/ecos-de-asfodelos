@@ -205,7 +205,11 @@ func sofrer_dano(quantidade):
 	
 	saude_atual = saude_projetada
 	emit_signal("saude_alterada", saude_atual, saude_maxima)
-	
+
+	# Efeito visual de dano no HUD
+	if hud and hud.has_method("mostrar_efeito_dano"):
+		hud.mostrar_efeito_dano()
+
 	# Carta "Guardião Caído": Onda de choque ao receber dano
 	if tem_guardiao_caido:
 		ativar_onda_de_choque()

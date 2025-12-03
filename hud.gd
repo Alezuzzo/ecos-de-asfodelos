@@ -9,6 +9,7 @@ var tex_coracao_vazio = preload("res://assets/coracao_vida/coracao_vazio.png")
 @onready var notificacao_label = $NotificacaoLabel
 @onready var notificacao_timer = $NotificacaoTimer
 @onready var difficulty_label = $DifficultyLabel
+@onready var damage_overlay = $DamageOverlay
 
 func _ready():
 	atualizar_label_dificuldade()
@@ -26,6 +27,17 @@ func mostrar_timer_foco(visivel: bool):
 
 func atualizar_timer_foco(progresso: float):
 	foco_timer_ui.value = progresso * 100.0
+
+func mostrar_efeito_dano():
+	if not damage_overlay:
+		return
+
+	damage_overlay.visible = true
+	damage_overlay.modulate.a = 0.3
+
+	var tween = create_tween()
+	tween.tween_property(damage_overlay, "modulate:a", 0.0, 0.4)
+	tween.tween_callback(func(): damage_overlay.visible = false)
 
 func atualizar_coracoes(saude_atual, saude_maxima):
 	for filho in container_coracoes.get_children():
