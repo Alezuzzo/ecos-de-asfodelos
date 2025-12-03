@@ -56,9 +56,7 @@ func _ready():
 		print("⚠️ MODO TESTE ATIVADO - Guardião com 1 de vida!")
 	else:
 		vida_atual = vida_maxima
-	if has_node("AtaqueCooldown"): $AtaqueCooldown.start(cooldown_ataque_f1)
-	else: printerr("ERRO em Guardiao: Nó AtaqueCooldown não encontrado.")
-	
+
 	tamanho_da_tela = get_viewport_rect().size
 	if has_node("CollisionShape2D") and $CollisionShape2D.shape:
 		if $CollisionShape2D.shape is CapsuleShape2D:
@@ -69,7 +67,21 @@ func _ready():
 	else:
 		metade_do_tamanho_sprite = Vector2.ZERO
 		print("AVISO em Guardiao: CollisionShape2D não encontrado ou sem shape.")
-	# O PeriodicSoundTimer começa sozinho com Autostart
+
+	# Toca a animação de entrada (transicao) antes de começar a fase 1
+	call_deferred("_entrada_animada")
+
+func _entrada_animada():
+	# Reproduz a animação de entrada/aparição
+	sprite_animado.play("transicao")
+	await sprite_animado.animation_finished
+
+	# Após a animação terminar, inicia a fase 1
+	sprite_animado.play("fase_1_idle")
+
+	# Agora que apareceu, inicia os timers de combate
+	if has_node("AtaqueCooldown"): $AtaqueCooldown.start(cooldown_ataque_f1)
+	else: printerr("ERRO em Guardiao: Nó AtaqueCooldown não encontrado.")
 
 func _physics_process(delta):
 	# Verificações (stun, invulnerabilidade, jogador válido)
