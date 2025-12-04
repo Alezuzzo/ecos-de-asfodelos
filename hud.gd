@@ -32,11 +32,13 @@ func mostrar_efeito_dano():
 	if not damage_overlay:
 		return
 
+	# Mostra o overlay com opacidade máxima
 	damage_overlay.visible = true
-	damage_overlay.modulate.a = 0.3
+	damage_overlay.modulate = Color(1, 0, 0, 0.5)
 
+	# Anima o fade out mais rápido para um efeito de flash
 	var tween = create_tween()
-	tween.tween_property(damage_overlay, "modulate:a", 0.0, 0.4)
+	tween.tween_property(damage_overlay, "modulate:a", 0.0, 0.25)
 	tween.tween_callback(func(): damage_overlay.visible = false)
 
 func atualizar_coracoes(saude_atual, saude_maxima):

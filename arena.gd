@@ -182,6 +182,34 @@ func spawnar_inimigo_para_chefe():
 	inimigo.global_position = spawn_pos
 	inimigo.jogador = jogador_node
 
+func screen_shake(duracao: float, intensidade: float):
+	var tempo_decorrido = 0.0
+	var original_offset = Vector2.ZERO
+
+	# Obtém o CanvasLayer ou qualquer nó que possamos mover
+	var ysort = get_node_or_null("YSortContainer")
+	if not is_instance_valid(ysort):
+		return
+
+	original_offset = ysort.position
+
+	while tempo_decorrido < duracao:
+		# Calcula a intensidade decrescente
+		var fator = 1.0 - (tempo_decorrido / duracao)
+		var shake_intensidade = intensidade * fator
+
+		# Aplica o tremor
+		ysort.position = original_offset + Vector2(
+			randf_range(-shake_intensidade, shake_intensidade),
+			randf_range(-shake_intensidade, shake_intensidade)
+		)
+
+		tempo_decorrido += get_process_delta_time()
+		await get_tree().process_frame
+
+	# Restaura a posição original
+	ysort.position = original_offset
+
 func iniciar_luta_chefe():
 	print("--- PREPARANDO PARA A CHEGADA DO GUARDIÃO... ---")
 	luta_contra_chefe_ativa = true
@@ -227,6 +255,9 @@ func iniciar_luta_chefe():
 	if is_instance_valid(scream_player):
 		scream_player.play()
 		print("--- GRITO DO GUARDIÃO! ---")
+
+	# TREMOR DE TELA quando o chefão aparece
+	screen_shake(1.5, 15.0)
 
 	# Aguarda o grito terminar (aproximadamente 2 segundos)
 	await get_tree().create_timer(2.0).timeout
