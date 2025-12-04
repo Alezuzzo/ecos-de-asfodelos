@@ -62,11 +62,12 @@ func _physics_process(delta):
 		var progresso = 1.0 - ($FocoTimer.time_left / $FocoTimer.wait_time)
 		if hud: hud.atualizar_timer_foco(progresso)
 
-	# Verifica inputs de tiro
+	# Verifica inputs de tiro (teclado ou botão A do gamepad)
 	esta_atirando_agora = Input.is_action_pressed("shoot_up") or \
 						  Input.is_action_pressed("shoot_down") or \
 						  Input.is_action_pressed("shoot_left") or \
-						  Input.is_action_pressed("shoot_right")
+						  Input.is_action_pressed("shoot_right") or \
+						  Input.is_joy_button_pressed(0, JOY_BUTTON_A)
 
 	handle_movimento()
 	handle_tiro()
@@ -78,12 +79,36 @@ func _physics_process(delta):
 #-----------------------------------------------------------------------------
 
 func handle_movimento():
+	# Teclado
 	var direcao = Input.get_vector("esquerda", "direita", "cima", "baixo")
+
+	# Gamepad - Analógico esquerdo (movimento)
+	var gamepad_move = Vector2(
+		Input.get_joy_axis(0, JOY_AXIS_LEFT_X),
+		Input.get_joy_axis(0, JOY_AXIS_LEFT_Y)
+	)
+
+	# Se o gamepad está sendo usado, usa sua direção
+	if gamepad_move.length() > 0.2:  # Deadzone de 0.2
+		direcao = gamepad_move.normalized()
+
 	velocity = direcao * velocidade
 	move_and_slide()
 
 func handle_tiro():
 	if not pode_atirar: return
+
+	# Botão A do gamepad - atira na direção do movimento ou última direção
+	if Input.is_joy_button_pressed(0, JOY_BUTTON_A):
+		# Se está se movendo, atira na direção do movimento
+		if velocity.length() > 50:
+			atirar(velocity.normalized())
+		else:
+			# Se está parado, atira na última direção conhecida
+			atirar(ultima_direcao_tiro)
+		return
+
+	# Teclado (setas) - sobrescreve a direção
 	if Input.is_action_pressed("shoot_up"): atirar(Vector2.UP)
 	elif Input.is_action_pressed("shoot_down"): atirar(Vector2.DOWN)
 	elif Input.is_action_pressed("shoot_left"): atirar(Vector2.LEFT)

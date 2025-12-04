@@ -78,9 +78,17 @@ func _tint(node: CanvasItem, col: Color) -> void:
 	tw.tween_property(node, "modulate", col, 0.08)
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
+	# ESC ou botão Start do gamepad (JOY_BUTTON_START = 6)
+	if event.is_action_pressed("ui_cancel") or \
+	   (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_START and event.pressed):
 		toggle_pause()
 		get_viewport().set_input_as_handled()
+
+	# Ajusta volume com os gatilhos do gamepad quando o slider tem foco
+	if is_paused and volume_slider.has_focus():
+		var axis_value = Input.get_joy_axis(0, JOY_AXIS_TRIGGER_RIGHT) - Input.get_joy_axis(0, JOY_AXIS_TRIGGER_LEFT)
+		if abs(axis_value) > 0.1:  # Deadzone
+			volume_slider.value = clamp(volume_slider.value + axis_value * 2.0, volume_slider.min_value, volume_slider.max_value)
 
 func toggle_pause() -> void:
 	is_paused = not is_paused
