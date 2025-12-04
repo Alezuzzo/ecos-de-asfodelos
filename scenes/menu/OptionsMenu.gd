@@ -75,15 +75,19 @@ func _ready() -> void:
 	music_slider.grab_focus()
 
 func _input(event: InputEvent) -> void:
+	var viewport = get_viewport()
+	if not viewport:
+		return
+
 	# Botão A do controle ativa o botão com foco
 	if event is InputEventJoypadButton and event.button_index == JOY_BUTTON_A and event.pressed:
-		var focused = get_viewport().gui_get_focus_owner()
+		var focused = viewport.gui_get_focus_owner()
 		if focused is Button:
 			focused.emit_signal("pressed")
-			get_viewport().set_input_as_handled()
+			viewport.set_input_as_handled()
 
 	# Ajusta sliders com os gatilhos do gamepad quando tem foco
-	var focused = get_viewport().gui_get_focus_owner()
+	var focused = viewport.gui_get_focus_owner()
 	if focused is HSlider:
 		var axis_value = Input.get_joy_axis(0, JOY_AXIS_TRIGGER_RIGHT) - Input.get_joy_axis(0, JOY_AXIS_TRIGGER_LEFT)
 		if abs(axis_value) > 0.1:  # Deadzone

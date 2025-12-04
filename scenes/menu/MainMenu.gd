@@ -44,10 +44,13 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	# Botão A do controle ativa o botão com foco
 	if event is InputEventJoypadButton and event.button_index == JOY_BUTTON_A and event.pressed:
-		var focused = get_viewport().gui_get_focus_owner()
+		var viewport = get_viewport()
+		if not viewport:
+			return
+		var focused = viewport.gui_get_focus_owner()
 		if focused is Button:
 			focused.emit_signal("pressed")
-			get_viewport().set_input_as_handled()
+			viewport.set_input_as_handled()
 
 func _wire_arrow_static(btn: Button, arrow: Label) -> void:
 	if btn == null or arrow == null: return
@@ -67,10 +70,14 @@ func _tint(node: CanvasItem, col: Color) -> void:
 func _on_start() -> void:
 	var difficulty_menu = DIFFICULTY_SCENE.instantiate()
 	add_child(difficulty_menu)
+	# Quando o menu de dificuldade for fechado, recupera o foco
+	difficulty_menu.tree_exiting.connect(func(): start_button.grab_focus())
 
 func _on_options() -> void:
 	var options_menu = OPTIONS_SCENE.instantiate()
 	add_child(options_menu)
+	# Quando o menu de opções for fechado, recupera o foco
+	options_menu.tree_exiting.connect(func(): options_button.grab_focus())
 
 func _on_quit() -> void:
 	get_tree().quit()
