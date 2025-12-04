@@ -18,8 +18,22 @@ func _ready():
 	play_again_button.pressed.connect(_on_play_again_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 
+	# Configura foco nos botões
+	play_again_button.focus_mode = Control.FOCUS_ALL
+	play_again_button.mouse_entered.connect(func(): play_again_button.grab_focus())
+	quit_button.focus_mode = Control.FOCUS_ALL
+	quit_button.mouse_entered.connect(func(): quit_button.grab_focus())
+
 	# Inicialmente esconde a tela
 	hide()
+
+func _input(event: InputEvent) -> void:
+	# Botão A do controle ativa o botão com foco
+	if event is InputEventJoypadButton and event.button_index == JOY_BUTTON_A and event.pressed:
+		var focused = get_viewport().gui_get_focus_owner()
+		if focused is Button:
+			focused.emit_signal("pressed")
+			get_viewport().set_input_as_handled()
 
 func mostrar_tela():
 	"""Mostra a tela de vitória"""

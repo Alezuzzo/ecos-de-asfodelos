@@ -20,6 +20,14 @@ func _ready() -> void:
 
 	normal_button.grab_focus()
 
+func _input(event: InputEvent) -> void:
+	# Botão A do controle ativa o botão com foco
+	if event is InputEventJoypadButton and event.button_index == JOY_BUTTON_A and event.pressed:
+		var focused = get_viewport().gui_get_focus_owner()
+		if focused is Button:
+			focused.emit_signal("pressed")
+			get_viewport().set_input_as_handled()
+
 func _on_easy_pressed() -> void:
 	GameSettings.set_difficulty("easy")
 	get_tree().change_scene_to_file("res://arena.tscn")

@@ -41,6 +41,14 @@ func _ready() -> void:
 
 	start_button.grab_focus()
 
+func _input(event: InputEvent) -> void:
+	# Botão A do controle ativa o botão com foco
+	if event is InputEventJoypadButton and event.button_index == JOY_BUTTON_A and event.pressed:
+		var focused = get_viewport().gui_get_focus_owner()
+		if focused is Button:
+			focused.emit_signal("pressed")
+			get_viewport().set_input_as_handled()
+
 func _wire_arrow_static(btn: Button, arrow: Label) -> void:
 	if btn == null or arrow == null: return
 	btn.focus_entered.connect(func():

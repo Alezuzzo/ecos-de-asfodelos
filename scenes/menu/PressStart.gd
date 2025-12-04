@@ -17,7 +17,13 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not _can_accept:
 		return
-	if event.is_action_pressed("ui_accept"): # Enter/Espaço/Controle A
+
+	# Aceita qualquer botão do controle
+	if event is InputEventJoypadButton and event.pressed:
 		get_tree().change_scene_to_file(MAIN_MENU)
+	# Aceita Enter/Espaço do teclado
+	elif event.is_action_pressed("ui_accept"):
+		get_tree().change_scene_to_file(MAIN_MENU)
+	# Aceita clique do mouse
 	elif event is InputEventMouseButton and event.pressed:
 		get_tree().change_scene_to_file(MAIN_MENU)
