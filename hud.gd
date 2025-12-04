@@ -32,14 +32,23 @@ func mostrar_efeito_dano():
 	if not damage_overlay:
 		return
 
-	# Mostra o overlay com opacidade máxima
+	# Mostra o overlay e anima a opacidade do shader
 	damage_overlay.visible = true
-	damage_overlay.modulate = Color(1, 0, 0, 0.5)
 
-	# Anima o fade out mais rápido para um efeito de flash
-	var tween = create_tween()
-	tween.tween_property(damage_overlay, "modulate:a", 0.0, 0.25)
-	tween.tween_callback(func(): damage_overlay.visible = false)
+	var material = damage_overlay.material as ShaderMaterial
+	if material:
+		# Define opacidade máxima
+		material.set_shader_parameter("vignette_opacity", 1.0)
+
+		# Anima o fade out da vinheta
+		var tween = create_tween()
+		tween.tween_method(
+			func(value): material.set_shader_parameter("vignette_opacity", value),
+			1.0,
+			0.0,
+			0.3
+		)
+		tween.tween_callback(func(): damage_overlay.visible = false)
 
 func atualizar_coracoes(saude_atual, saude_maxima):
 	for filho in container_coracoes.get_children():
