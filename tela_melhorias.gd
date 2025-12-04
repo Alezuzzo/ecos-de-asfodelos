@@ -54,11 +54,17 @@ func update_card_selection():
 				var tween = create_tween()
 				tween.tween_property(card_choices[i], "scale", Vector2(1.1, 1.1), 0.2)
 				tween.tween_property(card_choices[i], "modulate", Color(1.2, 1.2, 1.2), 0.2)
+				# Mostra a descrição da carta selecionada
+				if card_choices[i].has_node("DescriptionLabel"):
+					card_choices[i].get_node("DescriptionLabel").show()
 			else:
 				# Outras cartas voltam ao normal
 				var tween = create_tween()
 				tween.tween_property(card_choices[i], "scale", Vector2(1.0, 1.0), 0.2)
 				tween.tween_property(card_choices[i], "modulate", Color(0.7, 0.7, 0.7), 0.2)
+				# Esconde a descrição das cartas não selecionadas
+				if card_choices[i].has_node("DescriptionLabel"):
+					card_choices[i].get_node("DescriptionLabel").hide()
 
 func select_current_card():
 	if selected_card_index >= 0 and selected_card_index < card_choices.size():
