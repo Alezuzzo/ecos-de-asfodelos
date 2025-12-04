@@ -11,6 +11,7 @@ signal quit_pressed
 @onready var message_label: Label = $Background/CenterContainer/VBoxContainer/MessageLabel
 @onready var play_again_button: Button = $Background/CenterContainer/VBoxContainer/ButtonsContainer/PlayAgainButton
 @onready var quit_button: Button = $Background/CenterContainer/VBoxContainer/ButtonsContainer/QuitButton
+@onready var victory_music_player: AudioStreamPlayer = $VictoryMusicPlayer
 
 func _ready():
 	# Conecta os sinais dos botões
@@ -26,12 +27,22 @@ func mostrar_tela():
 	# Foca no botão de jogar novamente
 	play_again_button.grab_focus()
 
+	# Toca a música de vitória (se houver um áudio configurado)
+	if victory_music_player and victory_music_player.stream:
+		victory_music_player.play()
+
 # Função do botão Jogar Novamente
 func _on_play_again_pressed():
+	# Para a música de vitória
+	if victory_music_player:
+		victory_music_player.stop()
 	emit_signal("play_again_pressed")
 	hide()
 
 # Função do botão Sair
 func _on_quit_pressed():
+	# Para a música de vitória
+	if victory_music_player:
+		victory_music_player.stop()
 	emit_signal("quit_pressed")
 	hide()
