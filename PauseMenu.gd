@@ -84,6 +84,16 @@ func _input(event: InputEvent) -> void:
 		toggle_pause()
 		get_viewport().set_input_as_handled()
 
+	# Botão A do controle ativa o botão com foco
+	if is_paused and event is InputEventJoypadButton and event.button_index == JOY_BUTTON_A and event.pressed:
+		var viewport = get_viewport()
+		if not viewport:
+			return
+		var focused = viewport.gui_get_focus_owner()
+		if focused is Button:
+			focused.emit_signal("pressed")
+			viewport.set_input_as_handled()
+
 	# Ajusta volume com os gatilhos do gamepad quando o slider tem foco
 	if is_paused and volume_slider.has_focus():
 		var axis_value = Input.get_joy_axis(0, JOY_AXIS_TRIGGER_RIGHT) - Input.get_joy_axis(0, JOY_AXIS_TRIGGER_LEFT)
