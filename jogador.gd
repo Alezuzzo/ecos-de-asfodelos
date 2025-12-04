@@ -62,12 +62,15 @@ func _physics_process(delta):
 		var progresso = 1.0 - ($FocoTimer.time_left / $FocoTimer.wait_time)
 		if hud: hud.atualizar_timer_foco(progresso)
 
-	# Verifica inputs de tiro (teclado ou botão A do gamepad)
+	# Verifica inputs de tiro (teclado ou botões do gamepad)
 	esta_atirando_agora = Input.is_action_pressed("shoot_up") or \
 						  Input.is_action_pressed("shoot_down") or \
 						  Input.is_action_pressed("shoot_left") or \
 						  Input.is_action_pressed("shoot_right") or \
-						  Input.is_joy_button_pressed(0, JOY_BUTTON_A)
+						  Input.is_joy_button_pressed(0, JOY_BUTTON_A) or \
+						  Input.is_joy_button_pressed(0, JOY_BUTTON_B) or \
+						  Input.is_joy_button_pressed(0, JOY_BUTTON_X) or \
+						  Input.is_joy_button_pressed(0, JOY_BUTTON_Y)
 
 	handle_movimento()
 	handle_tiro()
@@ -98,17 +101,22 @@ func handle_movimento():
 func handle_tiro():
 	if not pode_atirar: return
 
-	# Botão A do gamepad - atira na direção do movimento ou última direção
+	# Gamepad - Botões direcionais
+	# A (azul) = Baixo, B (vermelho) = Direita, X (rosa) = Esquerda, Y (verde) = Cima
 	if Input.is_joy_button_pressed(0, JOY_BUTTON_A):
-		# Se está se movendo, atira na direção do movimento
-		if velocity.length() > 50:
-			atirar(velocity.normalized())
-		else:
-			# Se está parado, atira na última direção conhecida
-			atirar(ultima_direcao_tiro)
+		atirar(Vector2.DOWN)
+		return
+	elif Input.is_joy_button_pressed(0, JOY_BUTTON_B):
+		atirar(Vector2.RIGHT)
+		return
+	elif Input.is_joy_button_pressed(0, JOY_BUTTON_X):
+		atirar(Vector2.LEFT)
+		return
+	elif Input.is_joy_button_pressed(0, JOY_BUTTON_Y):
+		atirar(Vector2.UP)
 		return
 
-	# Teclado (setas) - sobrescreve a direção
+	# Teclado (setas)
 	if Input.is_action_pressed("shoot_up"): atirar(Vector2.UP)
 	elif Input.is_action_pressed("shoot_down"): atirar(Vector2.DOWN)
 	elif Input.is_action_pressed("shoot_left"): atirar(Vector2.LEFT)
