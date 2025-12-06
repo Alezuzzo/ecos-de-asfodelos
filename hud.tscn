@@ -1,12 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://y3f0yvohs0o5"]
+[gd_scene load_steps=5 format=3 uid="uid://y3f0yvohs0o5"]
 
 [ext_resource type="Script" uid="uid://cyvoofoa17v1q" path="res://hud.gd" id="1_37p78"]
-[ext_resource type="Shader" uid="uid://bod1uf87see1u" path="res://damage_vignette.gdshader" id="2_vignette"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
-shader = ExtResource("2_vignette")
-shader_parameter/vignette_intensity = 1.0
-shader_parameter/vignette_opacity = 0.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_37p78"]
 
@@ -22,17 +16,6 @@ corner_radius_bottom_left = 10
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_37p78")
-
-[node name="DamageOverlay" type="ColorRect" parent="."]
-material = SubResource("ShaderMaterial_vignette")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-mouse_filter = 2
 
 [node name="ContainerCoracoes" type="HBoxContainer" parent="."]
 offset_left = 20.0

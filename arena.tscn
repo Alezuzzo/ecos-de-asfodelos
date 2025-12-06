@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://swhhkx7vnfua"]
+[gd_scene load_steps=29 format=3 uid="uid://swhhkx7vnfua"]
 
 [ext_resource type="Script" uid="uid://2sj4gixj5wx5" path="res://arena.gd" id="1_444vf"]
 [ext_resource type="PackedScene" uid="uid://4vicljavkaft" path="res://jogador.tscn" id="2_27ga2"]
@@ -22,6 +22,7 @@
 [ext_resource type="AudioStream" uid="uid://b5f6ov0ohos70" path="res://assets/musica/entering-the-spiritual-arena.ogg" id="19_3vubs"]
 [ext_resource type="AudioStream" uid="uid://chev76d88gnj3" path="res://assets/musica/GuardianOfSoul.ogg" id="20_6p4q2"]
 [ext_resource type="PackedScene" uid="uid://c2x8yhv3pqm1e" path="res://PauseMenu.tscn" id="21_pause"]
+[ext_resource type="PackedScene" uid="uid://ysr70y8dgw3" path="res://DamageOverlay.tscn" id="23_r4b1s"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1pekq"]
 texture = ExtResource("7_1s3fb")
@@ -10632,6 +10633,8 @@ layer_0/tile_data = PackedInt32Array(1310770, 3407873, 23, 1376306, 2359297, 34,
 
 [node name="YSortContainer" type="Node2D" parent="."]
 y_sort_enabled = true
+
+[node name="DamageOverlayScene" parent="YSortContainer" instance=ExtResource("23_r4b1s")]
 
 [node name="Jogador" parent="YSortContainer" instance=ExtResource("2_27ga2")]
 position = Vector2(967, 469)

@@ -1,23 +1,22 @@
 shader_type canvas_item;
 
-uniform float vignette_intensity : hint_range(0.0, 1.0) = 0.5;
-uniform float vignette_opacity : hint_range(0.0, 1.0) = 1.0;
+// O NOME ABAIXO DEVE SER EXATAMENTE "vignette_opacity"
+uniform float vignette_opacity : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 vignette_color : source_color = vec4(0.8, 0.0, 0.0, 1.0); // Vermelho
 
 void fragment() {
-	// Normaliza as coordenadas UV para o centro da tela
-	vec2 center = vec2(0.5, 0.5);
-	vec2 uv = UV - center;
+    // Usa UV para garantir que funcione em qualquer resolução
+    vec2 uv = UV;
+    vec2 center = vec2(0.5, 0.5);
+    float dist = distance(uv, center);
 
-	// Ajusta a proporção da tela
-	uv.x *= SCREEN_PIXEL_SIZE.x / SCREEN_PIXEL_SIZE.y;
+    // Cria o círculo da vinheta
+    // smoothstep(borda_interna, borda_externa, distancia)
+    float vignette = smoothstep(0.2, 0.8, dist);
 
-	// Calcula a distância do centro
-	float dist = length(uv);
+    // Aplica a cor e a opacidade controlada pelo script
+    vec4 final_color = vignette_color;
+    final_color.a = vignette * vignette_opacity;
 
-	// Cria a vinheta (mais forte nas bordas)
-	float vignette = smoothstep(0.2, 1.0, dist) * vignette_intensity;
-
-	// Cor vermelha com a intensidade da vinheta
-	vec3 red = vec3(1.0, 0.0, 0.0);
-	COLOR = vec4(red, vignette * vignette_opacity);
+    COLOR = final_color;
 }

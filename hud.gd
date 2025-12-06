@@ -1,5 +1,6 @@
 extends CanvasLayer
 
+
 var tex_coracao_cheio = preload("res://assets/coracao_vida/coracao_cheio.png")
 var tex_meio_coracao = preload("res://assets/coracao_vida/meio_coracao.png")
 var tex_coracao_vazio = preload("res://assets/coracao_vida/coracao_vazio.png")
@@ -9,7 +10,6 @@ var tex_coracao_vazio = preload("res://assets/coracao_vida/coracao_vazio.png")
 @onready var notificacao_label = $NotificacaoLabel
 @onready var notificacao_timer = $NotificacaoTimer
 @onready var difficulty_label = $DifficultyLabel
-@onready var damage_overlay = $DamageOverlay
 
 func _ready():
 	atualizar_label_dificuldade()
@@ -28,49 +28,33 @@ func mostrar_timer_foco(visivel: bool):
 func atualizar_timer_foco(progresso: float):
 	foco_timer_ui.value = progresso * 100.0
 
-func mostrar_efeito_dano():
-	if not damage_overlay:
-		return
-
-	# Mostra o overlay e anima a opacidade do shader
-	damage_overlay.visible = true
-
-	var material = damage_overlay.material as ShaderMaterial
-	if material:
-		# Define opacidade máxima
-		material.set_shader_parameter("vignette_opacity", 1.0)
-
-		# Anima o fade out da vinheta
-		var tween = create_tween()
-		tween.tween_method(
-			func(value): material.set_shader_parameter("vignette_opacity", value),
-			1.0,
-			0.0,
-			0.3
-		)
-		tween.tween_callback(func(): damage_overlay.visible = false)
-
 func atualizar_coracoes(saude_atual, saude_maxima):
+	# Limpa os corações antigos
 	for filho in container_coracoes.get_children():
 		filho.queue_free()
+		
 	var total_de_containers = ceili(saude_maxima / 2.0)
 
 	for i in range(total_de_containers):
 		var valor_do_espaco = (i + 1) * 2
-		var tr = TextureRect.new()
+		
+		var novo_coracao = TextureRect.new()
 
 		if saude_atual >= valor_do_espaco:
-			tr.texture = tex_coracao_cheio
+			novo_coracao.texture = tex_coracao_cheio
 		elif saude_atual == valor_do_espaco - 1:
-			tr.texture = tex_meio_coracao
+			novo_coracao.texture = tex_meio_coracao
 		else:
-			tr.texture = tex_coracao_vazio
+			novo_coracao.texture = tex_coracao_vazio
 
-		container_coracoes.add_child(tr)
+		container_coracoes.add_child(novo_coracao)
 
 func atualizar_label_dificuldade():
 	if not difficulty_label:
 		return
+
+	# Verifica se existe a classe GameSettings (Singleton)
+	if not has_node("/root/GameSettings"): return
 
 	var difficulty = GameSettings.get_difficulty()
 	match difficulty:

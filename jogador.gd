@@ -1,30 +1,25 @@
-# jogador.gd
 extends CharacterBody2D
 
 signal saude_alterada(saude_atual, saude_maxima)
 signal morreu
 
-#-----------------------------------------------------------------------------
-# ATRIBUTOS DO JOGADOR
-#-----------------------------------------------------------------------------
+
 @export var velocidade = 300
 @export var cadencia_tiro = 0.25
 @export var dano_projetil = 1
 @export var saude_maxima = 6
 var saude_atual = 0
 
-#-----------------------------------------------------------------------------
-# REFERÊNCIAS DE CENAS E NÓS
-#-----------------------------------------------------------------------------
+
 var projetil_cena = preload("res://projetil.tscn")
 var onda_de_choque_cena = preload("res://onda_de_choque.tscn")
 var hud = null
-@onready var shot_sound_player = $ShotSoundPlayer
-@onready var sprite_animado = $AnimatedSprite2D # Cache da referência
+var damage_overlay_scene = null 
 
-#-----------------------------------------------------------------------------
-# ESTADO DAS MELHORIAS E CONTROLE
-#-----------------------------------------------------------------------------
+
+@onready var shot_sound_player = $ShotSoundPlayer
+@onready var sprite_animado = $AnimatedSprite2D
+
 var pode_atirar = true
 var ultima_direcao_tiro = Vector2.RIGHT
 var esta_atirando_agora = false
@@ -40,29 +35,34 @@ var invulneravel = false
 
 # Afinidade do Espectro
 var projeteis_perfurantes = false
-var chance_esquiva = 0.0 # Ex: 0.1 = 10%
+var chance_esquiva = 0.0
 var tem_ecos_desafiante = false
 
 # Cartas Corrompidas
 var pode_curar = true
 var projeteis_teleguiados = false
 
-
-#-----------------------------------------------------------------------------
-# FUNÇÕES DO GODOT
-#-----------------------------------------------------------------------------
-
 func _ready():
 	saude_atual = saude_maxima
 	emit_signal("saude_alterada", saude_atual, saude_maxima)
+	
+	# --- BUSCA A CENA DE DANO NA ARENA ---
+	# Procura por um nó chamado "DamageOverlayScene" (ou similar) no pai (Arena)
+	# Se você deu outro nome para a cena na Arena, ajuste o nome abaixo.
+	damage_overlay_scene = get_parent().get_node_or_null("DamageOverlayScene")
+	if not damage_overlay_scene:
+		# Tenta buscar pelo tipo se o nome falhar (mais robusto)
+		for filho in get_parent().get_children():
+			if filho.name.begins_with("DamageOverlay"):
+				damage_overlay_scene = filho
+				break
+	# -------------------------------------
 
-func _physics_process(delta):
-	# Atualiza o timer visual do Foco do Penitente
+func _physics_process(_delta): # Usei _delta para sumir com o aviso amarelo
 	if tem_foco_penitente and not $FocoTimer.is_stopped():
 		var progresso = 1.0 - ($FocoTimer.time_left / $FocoTimer.wait_time)
 		if hud: hud.atualizar_timer_foco(progresso)
 
-	# Verifica inputs de tiro (teclado ou botões do gamepad)
 	esta_atirando_agora = Input.is_action_pressed("shoot_up") or \
 						  Input.is_action_pressed("shoot_down") or \
 						  Input.is_action_pressed("shoot_left") or \
@@ -77,22 +77,15 @@ func _physics_process(delta):
 	handle_animacao()
 	clamp_position_to_screen()
 
-#-----------------------------------------------------------------------------
-# CONTROLE DE MOVIMENTO E ANIMAÇÃO
-#-----------------------------------------------------------------------------
-
 func handle_movimento():
-	# Teclado
 	var direcao = Input.get_vector("esquerda", "direita", "cima", "baixo")
 
-	# Gamepad - Analógico esquerdo (movimento)
 	var gamepad_move = Vector2(
 		Input.get_joy_axis(0, JOY_AXIS_LEFT_X),
 		Input.get_joy_axis(0, JOY_AXIS_LEFT_Y)
 	)
 
-	# Se o gamepad está sendo usado, usa sua direção
-	if gamepad_move.length() > 0.2:  # Deadzone de 0.2
+	if gamepad_move.length() > 0.2:
 		direcao = gamepad_move.normalized()
 
 	velocity = direcao * velocidade
@@ -101,50 +94,36 @@ func handle_movimento():
 func handle_tiro():
 	if not pode_atirar: return
 
-	# Gamepad - Botões direcionais
-	# A (azul) = Baixo, B (vermelho) = Direita, X (rosa) = Esquerda, Y (verde) = Cima
 	if Input.is_joy_button_pressed(0, JOY_BUTTON_A):
-		atirar(Vector2.DOWN)
-		return
+		atirar(Vector2.DOWN); return
 	elif Input.is_joy_button_pressed(0, JOY_BUTTON_B):
-		atirar(Vector2.RIGHT)
-		return
+		atirar(Vector2.RIGHT); return
 	elif Input.is_joy_button_pressed(0, JOY_BUTTON_X):
-		atirar(Vector2.LEFT)
-		return
+		atirar(Vector2.LEFT); return
 	elif Input.is_joy_button_pressed(0, JOY_BUTTON_Y):
-		atirar(Vector2.UP)
-		return
+		atirar(Vector2.UP); return
 
-	# Teclado (setas)
 	if Input.is_action_pressed("shoot_up"): atirar(Vector2.UP)
 	elif Input.is_action_pressed("shoot_down"): atirar(Vector2.DOWN)
 	elif Input.is_action_pressed("shoot_left"): atirar(Vector2.LEFT)
 	elif Input.is_action_pressed("shoot_right"): atirar(Vector2.RIGHT)
 
 func handle_animacao():
-	# 1. Define a animação baseada no movimento (WASD)
 	if velocity.length() > 0:
 		if velocity.y > 0: sprite_animado.play("walk_down")
 		elif velocity.y < 0: sprite_animado.play("walk_up")
 		else: sprite_animado.play("walk_side")
 	else:
-		# Se parado, define a postura baseada na última direção de tiro
-		# (Isso mantém o personagem "mirando" mesmo parado)
 		if ultima_direcao_tiro.y < 0: sprite_animado.play("walk_up")
 		elif ultima_direcao_tiro.y > 0: sprite_animado.play("walk_down")
 		else: sprite_animado.play("idle")
 	
-	# 2. Define o espelhamento (Flip H)
-	# Se estiver atirando, a prioridade é a direção do tiro
 	if esta_atirando_agora:
 		if ultima_direcao_tiro.x < 0: sprite_animado.flip_h = true
 		elif ultima_direcao_tiro.x > 0: sprite_animado.flip_h = false
-	# Se não estiver atirando mas estiver andando, olha pra onde anda
 	elif velocity.x != 0:
 		if velocity.x < 0: sprite_animado.flip_h = true
 		elif velocity.x > 0: sprite_animado.flip_h = false
-	# Se parado e não atirando, mantém o último flip.
 
 func clamp_position_to_screen():
 	var tamanho_da_tela = get_viewport_rect().size
@@ -156,25 +135,19 @@ func clamp_position_to_screen():
 		global_position.x = clamp(global_position.x, metade_largura, tamanho_da_tela.x - metade_largura)
 		global_position.y = clamp(global_position.y, metade_altura, tamanho_da_tela.y - metade_altura)
 
-#-----------------------------------------------------------------------------
-# SISTEMA DE TIRO E PROJÉTEIS
-#-----------------------------------------------------------------------------
 
 func atirar(direcao_tiro: Vector2):
 	if shot_sound_player: shot_sound_player.play()
 	pode_atirar = false
 	ultima_direcao_tiro = direcao_tiro
 	
-	# Cria o projétil principal (Dano total, Tamanho normal)
 	criar_projetil(direcao_tiro, dano_projetil, 1.0, true)
 	
-	# Se tiver a Sinergia "Ecos do Desafiante", dispara o eco
 	if tem_ecos_desafiante:
 		disparar_eco(direcao_tiro)
 
 	$TimerCadencia.start(cadencia_tiro)
 
-# Função auxiliar para evitar repetição de código na criação de projéteis
 func criar_projetil(direcao: Vector2, dano_base: int, escala: float, aplica_foco: bool):
 	var projetil = projetil_cena.instantiate()
 	projetil.position = position
@@ -182,42 +155,30 @@ func criar_projetil(direcao: Vector2, dano_base: int, escala: float, aplica_foco
 	projetil.dano = dano_base
 	projetil.scale = Vector2(escala, escala)
 	
-	# Aplica carta "Coroa do Mártir"
 	if projeteis_teleguiados:
 		projetil.eh_teleguiado = true
 	
-	# Aplica carta "Lágrimas Perfurantes"
 	if projeteis_perfurantes and "perfurante" in projetil:
 		projetil.perfurante = true
 
-	# Aplica carta "Foco do Penitente" (apenas no tiro principal)
 	if aplica_foco and tem_foco_penitente and foco_penitente_ativo:
 		projetil.dano *= 3
 		foco_penitente_ativo = false
 		$FocoTimer.start()
 		if hud: hud.atualizar_timer_foco(0.0)
 		print("TIRO COM FOCO DISPARADO!")
-		# Opcional: Aumentar visualmente o tiro crítico
 		projetil.scale *= 1.2 
 
 	get_parent().add_child(projetil)
 
-# Função assíncrona para o tiro secundário (Eco)
 func disparar_eco(direcao: Vector2):
-	await get_tree().create_timer(0.1).timeout # Pequeno atraso
-	# Eco causa 50% do dano e é menor
+	await get_tree().create_timer(0.1).timeout
 	var dano_eco = max(1, int(dano_projetil * 0.5))
-	# Cria o eco (sem aplicar o bônus de foco novamente)
 	criar_projetil(direcao, dano_eco, 0.7, false)
-
-#-----------------------------------------------------------------------------
-# SISTEMA DE DANO E CURA
-#-----------------------------------------------------------------------------
 
 func sofrer_dano(quantidade):
 	if invulneravel: return
 
-	# Carta "Forma Fantasma": Chance de esquiva
 	if chance_esquiva > 0.0:
 		if randf() < chance_esquiva:
 			print("ESQUIVA! Dano ignorado.")
@@ -226,7 +187,6 @@ func sofrer_dano(quantidade):
 
 	var saude_projetada = saude_atual - quantidade
 	
-	# Sinergia "Baluarte da Alma": Previne morte uma vez por onda
 	if tem_baluarte_da_alma and not baluarte_usado_na_onda and saude_projetada <= 0:
 		print("BALUARTE DA ALMA ATIVADO!")
 		baluarte_usado_na_onda = true
@@ -239,20 +199,22 @@ func sofrer_dano(quantidade):
 	saude_atual = saude_projetada
 	emit_signal("saude_alterada", saude_atual, saude_maxima)
 
-	# Efeito visual de dano no HUD
-	if hud and hud.has_method("mostrar_efeito_dano"):
-		hud.mostrar_efeito_dano()
+	if damage_overlay_scene and damage_overlay_scene.has_method("play_damage_effect"):
+		print("JOGADOR: Chamando overlay de dano na cena separada.")
+		damage_overlay_scene.play_damage_effect()
+	else:
+		if hud and hud.has_method("mostrar_efeito_dano"):
+			hud.mostrar_efeito_dano()
+		else:
+			print("JOGADOR AVISO: Nenhum efeito de dano visual encontrado (Nem cena, nem HUD).")
 
-	# Carta "Guardião Caído": Onda de choque ao receber dano
 	if tem_guardiao_caido:
 		ativar_onda_de_choque()
 		
-	# Carta "Foco do Penitente": Reseta se tomar dano
 	if tem_foco_penitente:
 		foco_penitente_ativo = false
 		$FocoTimer.start()
 		if hud: hud.atualizar_timer_foco(0.0)
-		print("Foco do Penitente perdido! Reiniciando contagem.")
 		
 	if saude_atual <= 0:
 		print("JOGADOR MORREU!")
@@ -260,7 +222,6 @@ func sofrer_dano(quantidade):
 		queue_free()
 
 func curar(quantidade):
-	# Carta Corrompida: Impede cura
 	if not pode_curar:
 		print("Maldição da Coroa do Mártir impede a cura!")
 		return
@@ -270,10 +231,6 @@ func curar(quantidade):
 func aumentar_vida_maxima(quantidade):
 	saude_maxima += quantidade
 	curar(quantidade)
-
-#-----------------------------------------------------------------------------
-# EFEITOS VISUAIS E ATIVAÇÕES
-#-----------------------------------------------------------------------------
 
 func ativar_onda_de_choque():
 	call_deferred("_spawn_onda_de_choque")
@@ -289,14 +246,10 @@ func piscar():
 	tween.tween_property(self, "modulate:a", 0.3, 0.25)
 	tween.tween_property(self, "modulate:a", 1.0, 0.25)
 
-func piscar_rapido(): # Para a esquiva
+func piscar_rapido():
 	var tween = create_tween()
 	tween.tween_property(self, "modulate:a", 0.2, 0.1)
 	tween.tween_property(self, "modulate:a", 1.0, 0.1)
-
-#-----------------------------------------------------------------------------
-# ATIVAÇÃO DE CARTAS (Chamadas pela Arena)
-#-----------------------------------------------------------------------------
 
 func ativar_foco_penitente():
 	tem_foco_penitente = true
@@ -308,10 +261,6 @@ func ativar_foco_penitente():
 func ativar_coroa_do_martir():
 	projeteis_teleguiados = true
 	pode_curar = false
-
-#-----------------------------------------------------------------------------
-# SIGNALS (CALLBACKS)
-#-----------------------------------------------------------------------------
 
 func _on_timer_cadencia_timeout():
 	pode_atirar = true
